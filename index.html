@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Porsche Car Club</title>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="keywords" content="Website untuk menampilkan informasi Mobil Porsche">
+  <meta name="description" content="Website untuk menampilkan informasi Mobil Porsche">
+  <meta name="author" content="Bernand Dayamuntari Hermawan">
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+  <meta name="msapplication-TileColor" content="#f44336">
+  <meta name="theme-color" content="#f44336">
+
+  <link rel="stylesheet" href="/assets/css/materialize.min.css">
+  <link rel="manifest" href="/manifest.json">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+
+<body>
+  <div class="navbar-fixed">
+    <nav class="red" role="navigation">
+      <div class="nav-wrapper container">
+        <a id="logo-container" href="#" class="brand-logo">Porsche Car</a>
+        <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul class="topnav right hide-on-med-and-down"></ul>
+
+
+      </div>
+    </nav>
+  </div>
+
+  <ul id="mobile-demo" class="sidenav"></ul>
+
+  <div class="container">
+    <div class="section">
+      <div class="row">
+        <div class="col s12">
+          <div class="center" id="body-content"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-copyright red" style="position:fixed;bottom:0;left:0;width:100%;z-index:1;">
+    <div class="container center">
+      <p>
+        <h5 class="header light white-text"> Made by Bernand Dayamuntari Hermawan</h5>
+      </p>
+
+
+    </div>
+  </div>
+
+  <script src="assets/js/jquery-2.1.1.min.js"></script>
+  <script src="assets/js/materialize.min.js"></script>
+  <script src="assets/js/nav.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker
+          .register("/service-worker.js")
+          .then(function () {
+            console.log("Pendaftaran ServiceWorker berhasil");
+          })
+          .catch(function () {
+            console.log("Pendaftaran ServiceWorker gagal");
+          });
+      });
+    } else {
+      console.log("ServiceWorker belum didukung browser ini.");
+    }
+  </script>
+</body>
+
+</html>
