@@ -33,43 +33,4 @@ document.addEventListener("DOMContentLoaded", function() {
       xhttp.open("GET", "components/nav.html", true);
       xhttp.send();
     }
-
-    // Load page content
-    var page = window.location.hash.substr(1);
-    if (page == "") page = "home";
-    loadPage(page);
-    
-    function loadPage(page) {
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-          if(this.readyState == 1) {
-            var content = document.querySelector("#body-content");
-            showLoading(content);
-          } else if (this.readyState == 4) {
-          var content = document.querySelector("#body-content");
-          if (this.status == 200) {
-            content.innerHTML = xhttp.responseText;
-          } else if (this.status == 404) {
-            content.innerHTML = "<h3 class='header center light red-text'>Halaman tidak ditemukan</h3>";
-          } else {
-            content.innerHTML = "<h3 class='header center light red-text'>Halaman tidak dapat diakses</h3>";
-          }
-        }
-      };
-      xhttp.open("GET", "pages/" + page + ".html", true);
-      xhttp.send();
-    }
-
-    function showLoading(content) {
-        var html = `<div class="section no-pad-bot" id="index-banner">
-        <div class="container">
-         
-          <div class="row center">
-            <h3 class='header center light blue-text'>Mohon tunggu...</h3>
-          </div>
-        </div>
-      </div>`;
-
-      content.innerHTML = html;
-    }
   });
