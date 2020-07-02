@@ -1,7 +1,7 @@
 {
-    "name": "Informasi Sepak Bola",
-    "short_name": "Informasi Sepak Bola",
-    "description": "Informasi Seputar Sepak Bola",
+    "name": "England Premier League Information",
+    "short_name": "England Premier League Information",
+    "description": "Application to Show Information of England Premier League",
     "theme_color": "#012756",
     "background_color": "#012756",
     "display": "standalone",

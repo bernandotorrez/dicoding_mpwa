@@ -3,6 +3,12 @@ document.addEventListener("DOMContentLoaded", function() {
     var elems = document.querySelectorAll(".sidenav");
     M.Sidenav.init(elems);
     loadNav();
+
+    var options = {
+      swipeable: true
+    }
+    var tabs = document.getElementById('tabs-swipe-demo');
+    M.Tabs.init(tabs, options);
    
     function loadNav() {
       var xhttp = new XMLHttpRequest();

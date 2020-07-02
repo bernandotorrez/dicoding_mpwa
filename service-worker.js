@@ -16,6 +16,8 @@ var urlsToCache = [
   "/assets/js/jquery-2.1.1.min.js",
   "/assets/js/materialize.min.js",
   "/assets/js/nav.js",
+  "/assets/js/helper.js",
+  "/assets/js/api.js",
   "/main.js",
   "/manifest.json",
   "/favicon.ico",
