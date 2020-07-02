@@ -33,9 +33,10 @@ function getCompetitionStandings() {
             if (response) {
                 response.json().then(function (data) {
                     console.log('ambil dari cache')
-                    viewHtmlTotal(data);
-                    viewHtmlHome(data);
-                    viewHtmlAway(data);
+                    viewHtmlStandings(data)
+                    // viewHtmlTotal(data);
+                    // viewHtmlHome(data);
+                    // viewHtmlAway(data);
                 })
             } else {
                 fetch(url_api, api_options)
@@ -43,9 +44,10 @@ function getCompetitionStandings() {
                 .then(json)
                 .then(function (response) {
                     console.log('ambil dari server')
-                    viewHtmlTotal(response);
-                    viewHtmlHome(response);
-                    viewHtmlAway(response);
+                    viewHtmlStandings(response)
+                    // viewHtmlTotal(response);
+                    // viewHtmlHome(response);
+                    // viewHtmlAway(response);
                 })
             }
         })
@@ -55,7 +57,7 @@ function getCompetitionStandings() {
 
 }
 
-function viewHtml(data) {
+function viewHtmlStandings(data) {
     const home = document.getElementById('body-content');
     const standings = data.standings;
     let html = '';
@@ -94,6 +96,12 @@ function viewHtml(data) {
     })
 
     home.innerHTML = html;
+
+    var options = {
+        swipeable: true
+      }
+      var tabs = document.getElementById('tabs-swipe-demo');
+      M.Tabs.init(tabs, options);
 }
 
 function viewHtmlTotal(data) {
@@ -102,7 +110,7 @@ function viewHtmlTotal(data) {
     let html = '';
 
     html += `<div class='row'>`;
-    html += `<div id="${standings.type.toLowerCase()}" class="col s12 m12">`;
+   
     standings.table.forEach(function (table) {
         var crestUrl = (table.team.crestUrl) ? forceHttps(table.team.crestUrl) : 'images/default-team-badge.png';
 
@@ -129,7 +137,7 @@ function viewHtmlTotal(data) {
             </div>`;
     })
 
-    html += `</div></div>`;
+    html += `</div>`;
 
     home.innerHTML = html;
 

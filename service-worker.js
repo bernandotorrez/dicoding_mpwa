@@ -10,14 +10,13 @@ var urlsToCache = [
   "/assets/css/materialize.min.css",
   "/assets/css/style.css",
   "https://fonts.googleapis.com/icon?family=Material+Icons",
-  "https://fonts.gstatic.com/s/materialicons/v52/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2",
+  "https://fonts.gstatic.com/s/materialicons/v53/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2",
   "/assets/images/718_boxster_s.jpg",
   "/assets/images/718_cayman_s.jpg",
   "/assets/images/911_carrera_4.jpg",
   "/assets/js/jquery-2.1.1.min.js",
   "/assets/js/materialize.min.js",
   "/assets/js/nav.js",
-  "/assets/js/helper.js",
   "/assets/js/api.js",
   "/main.js",
   "/manifest.json",
@@ -34,23 +33,36 @@ var urlsToCache = [
   "/assets/favicon/tile310x310.png",
 ];
 
+function forceHttps(text) {
+  return text.replace(/^http:\/\//i, 'https://');
+}
+
 self.addEventListener("fetch", function (event) {
   const base_url = 'https://api.football-data.org/v2';
-  if (event.request.url.indexOf(base_url) > -1) {
+  const image_api = forceHttps('https://upload.wikimedia.org');
+  if (event.request.url.indexOf(base_url) > -1 || event.request.url.indexOf(image_api) > -1) {
     event.respondWith(
-      caches.open(CACHE_NAME).then(function (cache) {
-        return fetch(event.request).then(function (response) {
-          cache.put(event.request.url, response.clone());
-          return response;
+      caches.open(CACHE_NAME).then(function(cache) {
+        return cache.match(event.request).then(function(response) {
+          var fetchPromise = fetch(event.request).then(function(networkResponse) {
+            cache.put(event.request.url, networkResponse.clone());
+            return networkResponse;
+          })
+          return response || fetchPromise;
         })
       })
     );
   } else {
     event.respondWith(
-      caches.match(event.request).then(function (response) {
-        return response || fetch(event.request);
+      caches.open(CACHE_NAME).then(function(cache) {
+        return cache.match(event.request).then(function(response) {
+          var fetchPromise = fetch(event.request).then(function(networkResponse) {
+            return networkResponse;
+          })
+          return response || fetchPromise;
+        })
       })
-    )
+    );
   }
 });
 

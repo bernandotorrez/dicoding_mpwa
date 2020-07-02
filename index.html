@@ -54,15 +54,33 @@
     <div class="container">
       <div class="section">
         <div class="row">
-          <div class="center text-center col s12 m12 l6"> 
-          <ul id="tabs-swipe-demo" class="tabs center">
+          <div class="center text-center col s12 m12 l12"> 
+          <ul id="tabs-swipe-demo" class="tabs tabs-fixed-width center">
             <li class="tab col s3"><a class="active" href="#total">Total</a></li>
             <li class="tab col s3"><a href="#home">Home</a></li>
             <li class="tab col s3"><a href="#away">Away</a></li>
           </ul>
+
+          <div id="body-content">
+            <div class="loading-content" class="center">
+              <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue-only">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    
         </div>
-  
-          <div id="total" class="col s12 l6">
+
+        
+          <!-- <div id="total" class="col s12 l6">
             <div class="loading-content center">
               <div class="preloader-wrapper big active">
                 <div class="spinner-layer spinner-blue-only">
@@ -107,7 +125,7 @@
               </div>
             </div>
           </div>
-          
+           -->
         </div>
       </div>
     </div>
@@ -116,10 +134,10 @@
 
   <script src="/assets/js/jquery-2.1.1.min.js"></script>
   <script src="/assets/js/materialize.min.js"></script>
-  <script src="/assets/js/nav.js"></script>
-  <script src="/assets/js/helper.js"></script>
-  <script src="/assets/js/api.js"></script>
   <script src="/main.js"></script>
+  <script src="/assets/js/nav.js"></script>
+  <script src="/assets/js/api.js"></script>
+  
 </body>
 
 </html>
