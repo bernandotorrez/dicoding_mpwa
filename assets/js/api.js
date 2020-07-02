@@ -1,8 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
-    getCompetitionStandings();
-})
-
-const base_url = "https://api.football-data.org/v2/";
+const base_url = "https://api.football-data.org/v2";
 const token = "37f0467b411a4834a7bc2bd0c148e467";
 const competitionId = '2021';
 const api_options = {
@@ -32,14 +28,31 @@ function error(error) {
 function getCompetitionStandings() {
     const url_api = `${base_url}/competitions/${competitionId}/standings`;
 
-    fetch(url_api, api_options)
-        .then(status)
-        .then(json)
-        .then(function (response) {
-            viewHtmlTotal(response);
-            viewHtmlHome(response);
-            viewHtmlAway(response);
+    if ('caches' in window) {
+        caches.match(url_api).then(function (response) {
+            if (response) {
+                response.json().then(function (data) {
+                    console.log('ambil dari cache')
+                    viewHtmlTotal(data);
+                    viewHtmlHome(data);
+                    viewHtmlAway(data);
+                })
+            } else {
+                fetch(url_api, api_options)
+                .then(status)
+                .then(json)
+                .then(function (response) {
+                    console.log('ambil dari server')
+                    viewHtmlTotal(response);
+                    viewHtmlHome(response);
+                    viewHtmlAway(response);
+                })
+            }
         })
+    }
+
+    
+
 }
 
 function viewHtml(data) {
@@ -88,7 +101,7 @@ function viewHtmlTotal(data) {
     const standings = data.standings[0];
     let html = '';
 
-    html += `<div class="row">`;
+    html += `<div class='row'>`;
     html += `<div id="${standings.type.toLowerCase()}" class="col s12 m12">`;
     standings.table.forEach(function (table) {
         var crestUrl = (table.team.crestUrl) ? forceHttps(table.team.crestUrl) : 'images/default-team-badge.png';

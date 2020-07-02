@@ -34,28 +34,29 @@ var urlsToCache = [
   "/assets/favicon/tile310x310.png",
 ];
 
-self.addEventListener("fetch", function(event) {
+self.addEventListener("fetch", function (event) {
+  const base_url = 'https://api.football-data.org/v2';
+  if (event.request.url.indexOf(base_url) > -1) {
     event.respondWith(
-      caches
-        .match(event.request, { cacheName: CACHE_NAME })
-        .then(function(response) {
-          if (response) {
-            console.log("ServiceWorker: Gunakan aset dari cache: ", response.url);
-            return response;
-          }
-   
-          console.log(
-            "ServiceWorker: Memuat aset dari server: ",
-            event.request.url
-          );
-          return fetch(event.request);
+      caches.open(CACHE_NAME).then(function (cache) {
+        return fetch(event.request).then(function (response) {
+          cache.put(event.request.url, response.clone());
+          return response;
         })
+      })
     );
-  });   
- 
-self.addEventListener("install", function(event) {
+  } else {
+    event.respondWith(
+      caches.match(event.request).then(function (response) {
+        return response || fetch(event.request);
+      })
+    )
+  }
+});
+
+self.addEventListener("install", function (event) {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
+    caches.open(CACHE_NAME).then(function (cache) {
       return cache.addAll(urlsToCache);
     })
   );
