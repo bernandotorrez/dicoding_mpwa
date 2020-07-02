@@ -8,6 +8,7 @@ var urlsToCache = [
   "/pages/contact.html",
   "/pages/list-car.html",
   "/assets/css/materialize.min.css",
+  "/assets/css/style.css",
   "https://fonts.googleapis.com/icon?family=Material+Icons",
   "https://fonts.gstatic.com/s/materialicons/v52/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2",
   "/assets/images/718_boxster_s.jpg",
