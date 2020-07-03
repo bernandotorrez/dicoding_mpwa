@@ -18,6 +18,7 @@ var urlsToCache = [
   "/assets/js/materialize.min.js",
   "/assets/js/nav.js",
   "/assets/js/api.js",
+  "/assets/images/default-team-badge.png",
   "/main.js",
   "/manifest.json",
   "/favicon.ico",
