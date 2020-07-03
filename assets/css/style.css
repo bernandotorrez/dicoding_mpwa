@@ -34,6 +34,10 @@
 .navy-text {
 	color: var(--primaryColor) !important;
 }
+
+.secondary-color-text {
+	color: var(--secondaryColor) !important;
+}
 /*----------------------------------------
     Card
 ------------------------------------------*/

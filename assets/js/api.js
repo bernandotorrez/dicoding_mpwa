@@ -117,51 +117,41 @@ function getTeams(callback) {
                     }
         })
     }
-
-    fetchApi(url_api)
-        .then((response) => {
-            callback.success(response);
-            return status(response);
-        })
-        .then(json)
-        .then(viewHtmlTeams)
-        .catch(error);
 }
 
+function getById(id) {
+    return new Promise(function(resolve, reject) {
+      dbPromise
+        .then(function(db) {
+          var tx = db.transaction("team_favorite", "readonly");
+          var store = tx.objectStore("team_favorite");
+          return store.get(id);
+        })
+        .then(function(team) {
+          resolve(team);
+        });
+    });
+  }
+
 function viewHtmlTeams(data) {
+    
     var html = '<div class="container"><div class="row">';
-    data.teams.forEach(team => {
+    data.teams.forEach(async function(team) {
+
         var crestUrl = (team.crestUrl) ? forceHttps(team.crestUrl) : 'assets/images/default-team-badge.png';
+        
         html += `<div class="col s6 m4 l3">
                 <div class="card team hoverable">
                     <div class="card-image center waves-effect waves-block waves-light">
                         <img onerror="imgError(this)" src="${crestUrl}">
+                        
                     </div>
                     <div class="card-content">
                         <a href="team.html?id=${team.id}" class="card-title truncate" title="${team.name}">${team.name}</a>
                     </div>
                 </div>
             </div>`;
-
-        // dbTeam.get(team.id).then((t) => {
-        //     if (!t) {
-        //         dbTeam.insert({
-        //             id: team.id,
-        //             name: team.name,
-        //             imgBadge: (team.crestUrl)? crestUrl : null,
-        //             star: false,
-        //             created: new Date().getTime()
-        //         });
-        //     } else if (!t.imgBadge) {
-        //         dbTeam.update({
-        //             id: team.id,
-        //             name: team.name,
-        //             imgBadge: (team.crestUrl)? crestUrl : null,
-        //             star: t.star,
-        //             created: new Date().getTime()
-        //         });
-        //     }
-        // });
+        
     });
     html += '</div></div>';
     document.querySelector('#body-content').innerHTML = html;

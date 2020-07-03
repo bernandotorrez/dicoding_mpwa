@@ -1,15 +1,8 @@
-const ASSETS_CACHE_NAME = "football-assets-cache";
-const API_CACHE = 'football-api-cache';
-var urlsToCache = [
+const ASSETS_CACHE_NAME = 'football-assets-cache';
+const PAGE_CACHE_NAME = 'football-page-cache';
+const API_CACHE_NAME = 'football-api-cache';
+const assetCache = [
   "/",
-  "/components/nav.html",
-  "/components/bottom-nav.html",
-  "/index.html",
-  "/pages/home.html",
-  "/pages/about.html",
-  "/pages/contact.html",
-  "/pages/standings.html",
-  "/pages/teams.html",
   "/assets/css/materialize.min.css",
   "/assets/css/style.css",
   "https://fonts.googleapis.com/icon?family=Material+Icons",
@@ -34,6 +27,17 @@ var urlsToCache = [
   "/assets/favicon/tile310x310.png",
 ];
 
+const pageCache = [
+  "/index.html",
+  "/pages/home.html",
+  "/pages/about.html",
+  "/pages/contact.html",
+  "/pages/standings.html",
+  "/pages/teams.html",
+  "/components/nav.html",
+  "/components/bottom-nav.html",
+]
+
 function forceHttps(text) {
   return text.replace(/^http:\/\//i, 'https://');
 }
@@ -43,7 +47,7 @@ self.addEventListener("fetch", function (event) {
   const image_api = forceHttps('https://upload.wikimedia.org');
   if (event.request.url.indexOf(base_url) > -1 || event.request.url.indexOf(image_api) > -1) {
     event.respondWith(
-      caches.open(API_CACHE).then(function(cache) {
+      caches.open(API_CACHE_NAME).then(function(cache) {
         return cache.match(event.request).then(function(response) {
           var fetchPromise = fetch(event.request).then(function(networkResponse) {
             cache.put(event.request.url, networkResponse.clone());
@@ -70,7 +74,13 @@ self.addEventListener("fetch", function (event) {
 self.addEventListener("install", function (event) {
   event.waitUntil(
     caches.open(ASSETS_CACHE_NAME).then(function (cache) {
-      return cache.addAll(urlsToCache);
+      return cache.addAll(assetCache);
+    })
+  );
+
+  event.waitUntil(
+    caches.open(PAGE_CACHE_NAME).then(function (cache) {
+      return cache.addAll(pageCache);
     })
   );
 });

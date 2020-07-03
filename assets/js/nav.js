@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
             break;
           case 'favorite':
             loading.classList.remove("hide");
-            getAllFavorite({
+            getFavorite({
               success: (response) => {
                 loading.classList.add("hide");
                 if (response === 0) {
