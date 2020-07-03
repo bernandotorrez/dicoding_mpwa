@@ -3,10 +3,13 @@ const API_CACHE = 'football-api-cache';
 var urlsToCache = [
   "/",
   "/components/nav.html",
+  "/components/bottom-nav.html",
   "/index.html",
   "/pages/home.html",
   "/pages/about.html",
   "/pages/contact.html",
+  "/pages/standings.html",
+  "/pages/teams.html",
   "/assets/css/materialize.min.css",
   "/assets/css/style.css",
   "https://fonts.googleapis.com/icon?family=Material+Icons",
