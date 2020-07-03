@@ -13,10 +13,6 @@ if ("serviceWorker" in navigator) {
   console.log("ServiceWorker belum didukung browser ini.");
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  getCompetitionStandings();
-});
-
 function forceHttps(text) {
   return text.replace(/^http:\/\//i, 'https://');
 }

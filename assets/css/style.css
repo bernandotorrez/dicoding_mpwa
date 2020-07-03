@@ -31,7 +31,9 @@
 	line-height: calc(100vh - 135px);
 }
 
-
+.navy-text {
+	color: var(--primaryColor) !important;
+}
 /*----------------------------------------
     Card
 ------------------------------------------*/
@@ -208,7 +210,7 @@
 	display: flex;
 	justify-content: center;
 	height: 100%;
-	--color-item-actived: rgba(255, 255, 255, 0.89);
+	--color-item-actived: var(--primaryColor);
 }
 
 .bottom-navigation-list-item {
@@ -222,7 +224,7 @@
 	max-width: 168px;
 	box-sizing: border-box;
 	border-radius: 30px;
-	color: var(--color-item-actived);
+	color: var(--secondaryColor);
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -240,7 +242,7 @@
 }
 
 .bottom-navigation-list-item.active {
-	color: var(--colorPrimary) !important;
+	color: var(--secondaryColor) !important;
 }
 
 .bottom-navigation-list-item-icon {
