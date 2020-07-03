@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-
   const MSG_NOT_FOUND = 'Page not Found';
   const MSG_FORBIDDEN = 'Page cant be Accessed';
   const MSG_ERROR = 'Something wrong in Server';
@@ -88,55 +87,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     loadBottomNav({
       loaded: (page) => {
-        var bodyContent = document.querySelector("#body-content > .container");
         var loading = document.querySelector(".loading-content");
         switch (page) {
           case 'standings':
             loading.classList.remove("hide");
-            getCompetitionStandings({
-              success: (response) => {
-                if (response.status === 200) {
-                  loading.classList.add("hide");
-                  
-                  var options = {
-                  swipeable: true
-                  }
-                  var tabs = document.getElementById('tabs-swipe-demo');
-                  M.Tabs.init(tabs, options);
-                } else {
-                  loading.classList.add("hide");
-                  bodyContent.innerHTML =
-                    "<h5 class='center-content center'>"+MSG_ERROR+"</h5>";
-                }
-              },
-              error: (error) => {}
-            });
+            getCompetitionStandings();
             break;
           case 'teams':
             loading.classList.remove("hide");
-            getTeams({
-              success: (response) => {
-                loading.classList.add("hide");
-                if (response.status !== 200) {
-                  bodyContent.innerHTML =
-                    "<h5 class='center-content center'>"+MSG_ERROR+"</h5>";
-                }
-              },
-              error: (error) => {}
-            });
+            getTeams();
             break;
           case 'favorite':
             loading.classList.remove("hide");
-            getFavorite({
-              success: (response) => {
-                loading.classList.add("hide");
-                if (response === 0) {
-                  bodyContent.innerHTML =
-                    "<h5 class='center-content center'>"+MSG_NO_FAVORITE+"</h5>";
-                }
-              },
-              error: (error) => {}
-            })
+            getFavoritedTeam()
             break;
         }
       }

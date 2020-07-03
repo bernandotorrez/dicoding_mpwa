@@ -5,8 +5,8 @@ const assetCache = [
   "/",
   "/assets/css/materialize.min.css",
   "/assets/css/style.css",
-  "https://fonts.googleapis.com/icon?family=Material+Icons",
-  "https://fonts.gstatic.com/s/materialicons/v53/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2",
+  "/assets/css/icon.css",
+  "/assets/css/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2",
   "/assets/js/jquery-2.1.1.min.js",
   "/assets/js/materialize.min.js",
   "/assets/js/nav.js",
@@ -34,6 +34,7 @@ const pageCache = [
   "/pages/contact.html",
   "/pages/standings.html",
   "/pages/teams.html",
+  "/pages/favorite.html",
   "/components/nav.html",
   "/components/bottom-nav.html",
 ]

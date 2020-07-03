@@ -7,14 +7,20 @@ const api_options = {
         'X-Auth-Token': token
     },
 }
+const MSG_NOT_FOUND = 'Page not Found';
+const MSG_FORBIDDEN = 'Page cant be Accessed';
+const MSG_ERROR = 'Something wrong in Server';
+const MSG_NO_FAVORITE = 'Favorite teams is Empty';
 
-const fetchApi = (url) => {  
-    return fetch(url, api_options); 
+const fetchApi = (url) => {
+    return fetch(url, api_options);
 }
 
 function status(response) {
+    var bodyContent = document.querySelector("#body-content > .container");
     if (response.status !== 200) {
         console.log("Error : " + response.status);
+        bodyContent.innerHTML = "<h5 class='center-content center'>" + MSG_ERROR + "</h5>";
         return Promise.reject(new Error(response.statusText));
     } else {
         return Promise.resolve(response);
@@ -41,10 +47,7 @@ function getCompetitionStandings(callback) {
                 })
             } else {
                 fetchApi(url_api)
-                    .then((response) => {
-                        callback.success(response);
-                        return status(response);
-                    })
+                    .then(status)
                     .then(json)
                     .then(viewHtmlStandings)
                     .catch(error);
@@ -91,55 +94,37 @@ function viewHtmlStandings(data) {
         var content = document.querySelector('#' + standing.type.toLowerCase());
         content.innerHTML = html;
     })
-    
-    
+
+    var options = {
+        swipeable: true
+    }
+    var tabs = document.getElementById('tabs-swipe-demo');
+    M.Tabs.init(tabs, options);
+
 }
 
-function getTeams(callback) {
+async function getTeams(callback) {
     const url_api = `${base_url}/teams`;
+    const db = await getTeamFromDb();
 
-    if ('caches' in window) {
-        caches.match(url_api).then(function (response) {
-            if (response) {
-                response.json().then(function (data) {
-                    console.log('ambil dari cache')
-                    viewHtmlTeams(data)
-                })
-            } else {
-                fetchApi(url_api)
-                .then((response) => {
-                    callback.success(response);
-                    return status(response);
-                })
-                .then(json)
-                .then(viewHtmlTeams)
-                .catch(error);
-                    }
-        })
+    if (db.length > 0) {
+        viewHtmlTeamsDb(db);
+    } else {
+        fetchApi(url_api)
+            .then(status)
+            .then(json)
+            .then(viewHtmlTeamsApi)
+            .catch(error);
     }
 }
 
-function getById(id) {
-    return new Promise(function(resolve, reject) {
-      dbPromise
-        .then(function(db) {
-          var tx = db.transaction("team_favorite", "readonly");
-          var store = tx.objectStore("team_favorite");
-          return store.get(id);
-        })
-        .then(function(team) {
-          resolve(team);
-        });
-    });
-  }
+function viewHtmlTeamsApi(data) {
 
-function viewHtmlTeams(data) {
-    
     var html = '<div class="container"><div class="row">';
-    data.teams.forEach(async function(team) {
+    data.teams.forEach(function (team) {
 
         var crestUrl = (team.crestUrl) ? forceHttps(team.crestUrl) : 'assets/images/default-team-badge.png';
-        
+
         html += `<div class="col s6 m4 l3">
                 <div class="card team hoverable">
                     <div class="card-image center waves-effect waves-block waves-light">
@@ -148,12 +133,110 @@ function viewHtmlTeams(data) {
                     </div>
                     <div class="card-content">
                         <a href="team.html?id=${team.id}" class="card-title truncate" title="${team.name}">${team.name}</a>
+                        <a class="btn-floating halfway-fab waves-effect waves-light second_color" id="${team.id}" onclick="addFavoriteTeam(this)"><i class="material-icons white-text">favorite</i></a>
                     </div>
                 </div>
             </div>`;
-        
+
+        dbTeam.get(team.id).then((t) => {
+            if (!t) {
+                dbTeam.insert({
+                    id: team.id,
+                    name: team.name,
+                    image: (team.crestUrl) ? crestUrl : null,
+                    flag_favorite: 0,
+                    created: new Date().getTime()
+                });
+            } else if (!t.image) {
+                dbTeam.update({
+                    id: team.id,
+                    name: team.name,
+                    image: (team.crestUrl) ? crestUrl : null,
+                    flag_favorite: t.flag_favorite,
+                    created: new Date().getTime()
+                });
+            }
+        });
     });
     html += '</div></div>';
     document.querySelector('#body-content').innerHTML = html;
+
+    var loading = document.querySelector('.loading-content');
+    loading.classList.add('hide');
 }
 
+function viewHtmlTeamsDb(data) {
+
+    var html = '<div class="container"><div class="row">';
+
+    data.forEach(function (team) {
+        let favorited = '';
+        if (team.flag_favorite == 0) {
+            favorited = 'white-text';
+        } else {
+            favorited = 'navy-text';
+        }
+        var crestUrl = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
+
+        html += `<div class="col s6 m4 l3">
+                <div class="card team hoverable">
+                    <div class="card-image center waves-effect waves-block waves-light">
+                        <img onerror="imgError(this)" src="${crestUrl}">
+                        
+                    </div>
+                    <div class="card-content">
+                        <a href="team.html?id=${team.id}" class="card-title truncate" title="${team.name}">${team.name}</a>
+                        <a class="btn-floating halfway-fab waves-effect waves-light second_color" id="${team.id}" onclick="addFavoriteTeam(this)"><i class="material-icons ${favorited}">favorite</i></a>
+                    </div>
+                </div>
+            </div>`;
+    });
+    html += '</div></div>';
+    document.querySelector('#body-content').innerHTML = html;
+
+    var loading = document.querySelector('.loading-content');
+    loading.classList.add('hide');
+}
+
+async function getFavoritedTeam() {
+    const db = await getFavoritedTeamFromDb(1);
+
+    viewHtmlFavoritedTeam(db);
+}
+
+function viewHtmlFavoritedTeam(data) {
+
+    var html = '<div class="container"><div class="row">';
+
+    if (data.length == 0) {
+        document.querySelector('#body-content').innerHTML = "<h5 class='center-content center'>" + MSG_NO_FAVORITE + "</h5>";
+    } else {
+        data.forEach(function (team) {
+            let favorited = '';
+            if (team.flag_favorite == 0) {
+                favorited = 'white-text';
+            } else {
+                favorited = 'navy-text';
+            }
+            var crestUrl = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
+
+            html += `<div class="col s6 m4 l3">
+                    <div class="card team hoverable">
+                        <div class="card-image center waves-effect waves-block waves-light">
+                            <img onerror="imgError(this)" src="${crestUrl}">
+                            
+                        </div>
+                        <div class="card-content">
+                            <a href="team.html?id=${team.id}" class="card-title truncate" title="${team.name}">${team.name}</a>
+                            <a class="btn-floating halfway-fab waves-effect waves-light second_color" id="${team.id}" onclick="addFavoriteTeam(this)"><i class="material-icons ${favorited}">favorite</i></a>
+                        </div>
+                    </div>
+                </div>`;
+        });
+        html += '</div></div>';
+        document.querySelector('#body-content').innerHTML = html;
+    }
+
+    var loading = document.querySelector('.loading-content');
+    loading.classList.add('hide');
+}
