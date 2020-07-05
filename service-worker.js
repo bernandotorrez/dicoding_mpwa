@@ -1,17 +1,27 @@
-const ASSETS_CACHE_NAME = 'football-assets-cache';
-const PAGE_CACHE_NAME = 'football-page-cache';
-const API_CACHE_NAME = 'football-api-cache';
-const assetCache = [
+const CACHE_NAME = "england-premier-cache";
+var urlsToCache = [
   "/",
+  "/components/nav.html",
+  "/components/bottom-nav.html",
+  "/index.html",
+  "/pages/about.html",
+  "/pages/contact.html",
+  "/pages/home.html",
+  "/pages/favorite.html",
+  "/pages/standings.html",
+  "/pages/detail-match.html",
+  "/pages/teams.html",
   "/assets/css/materialize.min.css",
   "/assets/css/style.css",
   "/assets/css/icon.css",
-  "/assets/css/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2",
+  "https://fonts.gstatic.com/s/materialicons/v53/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2",
+  "/assets/images/default-team-badge.png",
+  "/assets/js/api.js",
+  "/assets/js/db.js",
+  "/assets/js/idb.js",
   "/assets/js/jquery-2.1.1.min.js",
   "/assets/js/materialize.min.js",
   "/assets/js/nav.js",
-  "/assets/js/api.js",
-  "/assets/images/default-team-badge.png",
   "/main.js",
   "/manifest.json",
   "/favicon.ico",
@@ -27,18 +37,6 @@ const assetCache = [
   "/assets/favicon/tile310x310.png",
 ];
 
-const pageCache = [
-  "/index.html",
-  "/pages/home.html",
-  "/pages/about.html",
-  "/pages/contact.html",
-  "/pages/standings.html",
-  "/pages/teams.html",
-  "/pages/favorite.html",
-  "/components/nav.html",
-  "/components/bottom-nav.html",
-]
-
 function forceHttps(text) {
   return text.replace(/^http:\/\//i, 'https://');
 }
@@ -48,7 +46,7 @@ self.addEventListener("fetch", function (event) {
   const image_api = forceHttps('https://upload.wikimedia.org');
   if (event.request.url.indexOf(base_url) > -1 || event.request.url.indexOf(image_api) > -1) {
     event.respondWith(
-      caches.open(API_CACHE_NAME).then(function(cache) {
+      caches.open(CACHE_NAME).then(function(cache) {
         return cache.match(event.request).then(function(response) {
           var fetchPromise = fetch(event.request).then(function(networkResponse) {
             cache.put(event.request.url, networkResponse.clone());
@@ -60,7 +58,7 @@ self.addEventListener("fetch", function (event) {
     );
   } else {
     event.respondWith(
-      caches.open(ASSETS_CACHE_NAME).then(function(cache) {
+      caches.open(CACHE_NAME).then(function(cache) {
         return cache.match(event.request).then(function(response) {
           var fetchPromise = fetch(event.request).then(function(networkResponse) {
             return networkResponse;
@@ -74,14 +72,8 @@ self.addEventListener("fetch", function (event) {
 
 self.addEventListener("install", function (event) {
   event.waitUntil(
-    caches.open(ASSETS_CACHE_NAME).then(function (cache) {
-      return cache.addAll(assetCache);
-    })
-  );
-
-  event.waitUntil(
-    caches.open(PAGE_CACHE_NAME).then(function (cache) {
-      return cache.addAll(pageCache);
+    caches.open(CACHE_NAME).then(function (cache) {
+      return cache.addAll(urlsToCache);
     })
   );
 });

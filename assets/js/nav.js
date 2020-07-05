@@ -5,14 +5,14 @@ document.addEventListener('DOMContentLoaded', function () {
   const MSG_NO_FAVORITE = 'Favorite teams is Empty';
 
   loadTopNav();
- 
+
   function loadTopNav() {
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
+    xhttp.onreadystatechange = function () {
       if (this.readyState == 4) {
         if (this.status != 200) return;
-   
-        document.querySelectorAll(".topnav").forEach(function(elm) {
+
+        document.querySelectorAll(".topnav").forEach(function (elm) {
           elm.innerHTML = xhttp.responseText;
         });
       }
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     xhttp.send();
   }
 
-    function loadBottomNav(callback) {
+  function loadBottomNav(callback) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
       if (this.readyState == 4) {
@@ -39,11 +39,11 @@ document.addEventListener('DOMContentLoaded', function () {
             loadPage(page, callback);
           });
         });
-  
+
         var page = window.location.hash.substr(1);
         if (page == '') page = 'standings';
         loadPage(page, callback);
-  
+
         elms.forEach(elm => {
           if (elm.getAttribute('href').substr(1) === page) {
             elms.forEach(e => {
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             elm.classList.add('active');
           }
-  
+
         });
       }
     };
@@ -62,46 +62,46 @@ document.addEventListener('DOMContentLoaded', function () {
   function loadPage(page, callback) {
     var content = document.querySelector("#body-content");
     var loading = document.querySelector(".loading-content");
-  
+
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
       loading.classList.add("hide");
-  
+
       if (this.readyState === 4) {
         if (this.status === 200) {
           content.innerHTML = xhttp.responseText;
           callback.loaded(page);
         } else if (this.status === 404) {
-          content.innerHTML = "<h5 class='center-content center'>"+MSG_NOT_FOUND+"</h5>";
+          content.innerHTML = "<h5 class='center-content center'>" + MSG_NOT_FOUND + "</h5>";
         } else {
-          content.innerHTML = "<h5 class='center-content center'"+MSG_FORBIDDEN+"</h5>";
+          content.innerHTML = "<h5 class='center-content center'" + MSG_FORBIDDEN + "</h5>";
         }
       }
     };
-  
+
     xhttp.open("GET", 'pages/' + page + '.html', true);
     xhttp.send();
     loading.classList.remove("hide");
     content.innerHTML = "";
   }
 
-    loadBottomNav({
-      loaded: (page) => {
-        var loading = document.querySelector(".loading-content");
-        switch (page) {
-          case 'standings':
-            loading.classList.remove("hide");
-            getCompetitionStandings();
-            break;
-          case 'teams':
-            loading.classList.remove("hide");
-            getTeams();
-            break;
-          case 'favorite':
-            loading.classList.remove("hide");
-            getFavoritedTeam()
-            break;
-        }
+  loadBottomNav({
+    loaded: (page) => {
+      var loading = document.querySelector(".loading-content");
+      switch (page) {
+        case 'standings':
+          loading.classList.remove("hide");
+          getCompetitionStandings();
+          break;
+        case 'teams':
+          loading.classList.remove("hide");
+          getTeams();
+          break;
+        case 'favorite':
+          loading.classList.remove("hide");
+          getFavoritedTeam()
+          break;
       }
-    });
+    }
   });
+});

@@ -9,7 +9,7 @@ const api_options = {
 }
 const MSG_NOT_FOUND = 'Page not Found';
 const MSG_FORBIDDEN = 'Page cant be Accessed';
-const MSG_ERROR = 'Something wrong in Server';
+const MSG_ERROR = 'Ooops, Something went wrong';
 const MSG_NO_FAVORITE = 'Favorite teams is Empty';
 
 const fetchApi = (url) => {
@@ -32,10 +32,11 @@ function json(response) {
 }
 
 function error(error) {
-    console.log("Error : " + error);
+    document.querySelector('#body-content').innerHTML = "<h5 class='center-content center'>" + MSG_ERROR + "</h5>";
+    hideLoading();
 }
 
-function getCompetitionStandings(callback) {
+function getCompetitionStandings() {
     const url_api = `${base_url}/competitions/${competitionId}/standings`;
 
     if ('caches' in window) {
@@ -57,15 +58,12 @@ function getCompetitionStandings(callback) {
 }
 
 function viewHtmlStandings(data) {
-    const standings = data.standings;
-    let html = '';
-
+    const {standings} = data;
     standings.forEach(function (standing) {
-        html += `<div id="${standing.type.toLowerCase()}" class="col s12">`;
-        html += `<div class="row">`;
+        var html = `<div class="row">`;
         standing.table.forEach(function (table) {
-            var crestUrl = (table.team.crestUrl) ? forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
-
+            var crestUrl = (table.team.crestUrl)?forceHttps(table.team.crestUrl) : 'images/default-team-badge.png';
+    
             html += `<div class="col s12 l6">
             <div class="card hoverable horizontal">
                 <div class="card-image waves-effect waves-block waves-light">
@@ -73,7 +71,7 @@ function viewHtmlStandings(data) {
                 </div>
                 <div class="card-stacked">
                     <div class="card-content">
-                        <a href="match.html?id=${table.team.id}" class="card-title">${table.team.name}</a>
+                        <a href="detail-match.html?id=${window.btoa(table.team.id)}" class="card-title">${table.team.name}</a>
                         <ul>
                             <li><div title="Matches Played" class="white-text">MP</div><div class="val white-text text-center">${table.playedGames}</div></li>
                             <li><div title="Won" class="white-text">W</div><div class="val white-text">${table.won}</div></li>
@@ -87,13 +85,12 @@ function viewHtmlStandings(data) {
                 </div>
             </div>
             </div>`;
-        })
-
-        html += `</div></div>`;
-
+        });
+        html += '</div>';
+    
         var content = document.querySelector('#' + standing.type.toLowerCase());
         content.innerHTML = html;
-    })
+    });
 
     var options = {
         swipeable: true
@@ -101,9 +98,10 @@ function viewHtmlStandings(data) {
     var tabs = document.getElementById('tabs-swipe-demo');
     M.Tabs.init(tabs, options);
 
+    hideLoading();
 }
 
-async function getTeams(callback) {
+async function getTeams() {
     const url_api = `${base_url}/teams`;
     const db = await getTeamFromDb();
 
@@ -161,8 +159,7 @@ function viewHtmlTeamsApi(data) {
     html += '</div></div>';
     document.querySelector('#body-content').innerHTML = html;
 
-    var loading = document.querySelector('.loading-content');
-    loading.classList.add('hide');
+    hideLoading();
 }
 
 function viewHtmlTeamsDb(data) {
@@ -194,8 +191,7 @@ function viewHtmlTeamsDb(data) {
     html += '</div></div>';
     document.querySelector('#body-content').innerHTML = html;
 
-    var loading = document.querySelector('.loading-content');
-    loading.classList.add('hide');
+    hideLoading();
 }
 
 async function getFavoritedTeam() {
@@ -237,6 +233,10 @@ function viewHtmlFavoritedTeam(data) {
         document.querySelector('#body-content').innerHTML = html;
     }
 
+    hideLoading();
+}
+
+function hideLoading() {
     var loading = document.querySelector('.loading-content');
     loading.classList.add('hide');
 }
