@@ -20,4 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
         xhttp.open("GET", "components/detail-match-nav.html", true);
         xhttp.send();
     }
+
+    
 })

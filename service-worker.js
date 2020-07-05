@@ -37,10 +37,6 @@ var urlsToCache = [
   "/assets/favicon/tile310x310.png",
 ];
 
-function forceHttps(text) {
-  return text.replace(/^http:\/\//i, 'https://');
-}
-
 self.addEventListener("fetch", function (event) {
   const base_url = 'https://api.football-data.org/v2';
   const image_api = forceHttps('https://upload.wikimedia.org');

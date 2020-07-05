@@ -131,7 +131,7 @@ function viewHtmlTeamsApi(data) {
                     </div>
                     <div class="card-content">
                         <a href="team.html?id=${team.id}" class="card-title truncate" title="${team.name}">${team.name}</a>
-                        <a class="btn-floating halfway-fab waves-effect waves-light second_color" id="${team.id}" onclick="addFavoriteTeam(this)"><i class="material-icons white-text">favorite</i></a>
+                        <a class="btn-floating halfway-fab waves-effect waves-light second_color" id="${team.id}" onclick="addFavoriteTeam(this)"><i class="material-icons white-text team">favorite</i></a>
                     </div>
                 </div>
             </div>`;
@@ -234,9 +234,4 @@ function viewHtmlFavoritedTeam(data) {
     }
 
     hideLoading();
-}
-
-function hideLoading() {
-    var loading = document.querySelector('.loading-content');
-    loading.classList.add('hide');
 }

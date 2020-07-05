@@ -38,6 +38,11 @@
 .secondary-color-text {
 	color: var(--secondaryColor) !important;
 }
+
+.material-icons.white-text.team:hover {
+      background-color: var(--secondaryColor) !important;
+      color: var(--primaryColor) !important;
+}
 /*----------------------------------------
     Card
 ------------------------------------------*/
@@ -275,6 +280,32 @@ img.bottom-navigation-list-item-icon {
 
 .top-bottom-navigation-mobile {
 	margin-bottom: 0;
+}
+
+/*----------------------------------------
+    Team detail
+------------------------------------------*/
+
+.team-detail {
+	display: inline-flex;
+}
+
+.team-detail>.badge-team {
+	width: 16ch;
+	height: 16ch;
+	padding: 1rem;
+}
+
+.team-detail>.detail {
+	align-self: center;
+	margin: 0px 0 2rem .8rem;
+	display: flex;
+}
+
+.team-detail>.detail span {
+	font-size: 18px;
+	font-weight: 600;
+	margin-right: 5px;
 }
 
 @media only screen and (max-width: 992px) {
