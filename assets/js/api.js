@@ -7,6 +7,14 @@ const api_options = {
         'X-Auth-Token': token
     },
 }
+const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
+const colors = [
+    "red", "green", "orange", "grey", "blue"
+];
+
 const MSG_NOT_FOUND = 'Page not Found';
 const MSG_FORBIDDEN = 'Page cant be Accessed';
 const MSG_ERROR = 'Ooops, Something went wrong';
@@ -31,7 +39,7 @@ function json(response) {
     return response.json();
 }
 
-function error(error) {
+function error() {
     document.querySelector('#body-content').innerHTML = "<h5 class='center-content center'>" + MSG_ERROR + "</h5>";
     hideLoading();
 }
@@ -62,7 +70,7 @@ function viewHtmlStandings(data) {
     standings.forEach(function (standing) {
         var html = `<div class="row">`;
         standing.table.forEach(function (table) {
-            var crestUrl = (table.team.crestUrl)?forceHttps(table.team.crestUrl) : 'images/default-team-badge.png';
+            var crestUrl = (table.team.crestUrl)?forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
     
             html += `<div class="col s12 l6">
             <div class="card hoverable horizontal">
@@ -71,7 +79,7 @@ function viewHtmlStandings(data) {
                 </div>
                 <div class="card-stacked">
                     <div class="card-content">
-                        <a href="detail-match.html?id=${window.btoa(table.team.id)}" class="card-title">${table.team.name}</a>
+                        <a href="detail-match.html?id=${window.btoa(table.team.id)}#match" class="card-title">${table.team.name}</a>
                         <ul>
                             <li><div title="Matches Played" class="white-text">MP</div><div class="val white-text text-center">${table.playedGames}</div></li>
                             <li><div title="Won" class="white-text">W</div><div class="val white-text">${table.won}</div></li>
@@ -85,12 +93,26 @@ function viewHtmlStandings(data) {
                 </div>
             </div>
             </div>`;
+
         });
         html += '</div>';
     
         var content = document.querySelector('#' + standing.type.toLowerCase());
         content.innerHTML = html;
     });
+
+    standings[0].table.forEach(function(table) {
+        dbStanding.get(table.team.id).then(function(data) {
+            if(!data) {
+                var crestUrl = (table.team.crestUrl)?forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
+                dbStanding.insert({
+                    id: table.team.id,
+                    name: table.team.name,
+                    image: crestUrl
+                })
+            }
+        })
+    })
 
     var options = {
         swipeable: true
@@ -232,6 +254,86 @@ function viewHtmlFavoritedTeam(data) {
         html += '</div></div>';
         document.querySelector('#body-content').innerHTML = html;
     }
+
+    hideLoading();
+}
+
+function getDetailMatch() {
+    var url = new URLSearchParams(window.location.search);
+    var id = window.atob(url.get("id"));
+    if (!id) {
+        return error();
+    }
+
+    const url_api = `${base_url}/teams/${id}/matches`;
+
+    fetchApi(url_api)
+        .then(status)
+        .then(json)
+        .then(viewHtmlDetailMatch)
+        .catch(error);
+   
+        dbStanding.get(parseInt(id)).then((team) => {
+            var content = document.querySelector('.team-detail');
+            content.innerHTML = `<div class="badge-team">
+            <img onerror="imgError(this)" class="responsive-img" src="${team.image}">
+          </div>
+          <div class="detail">
+            <span>${team.name}</span>
+            <a href="#" class="star hide-on-med-and-down"><i class="material-icons"></i></div></a>`;
+        });
+}
+
+function viewHtmlDetailMatch(data) {
+    data.matches.forEach(matche => {
+        var scoreHome = (matche.score.fullTime.homeTeam == null) ? '-' : matche.score.fullTime.homeTeam;
+        var scoreAway = (matche.score.fullTime.awayTeam == null) ? '-' : matche.score.fullTime.awayTeam;
+        var date = new Date(matche.utcDate);
+
+        var html = `<div class="col s12 m12 l6 center">
+        <div class="card hoverable horizontal match">
+        <div class="card-image left waves-effect waves-block waves-light">
+            <img onerror="imgError(this)" class="badge" data-team="${matche.homeTeam.id}" src="assets/images/default-team-badge.png">
+            <a href="team.html?id=${matche.homeTeam.id}" class="title truncate navy-text">${matche.homeTeam.name}</a>
+        </div>
+        <div class="card-stacked">
+          <div class="card-content center">
+            <span class="date white-text" date="${matche.utcDate}">${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}</span>
+            <time class="white-text">${date.getHours()}:${date.getMinutes()}</time>
+            <h3 class="score white-text">${scoreHome} : ${scoreAway}</h3>
+          </div>
+        </div>
+        <div class="card-image right waves-effect waves-block waves-light">
+            <img onerror="imgError(this)" class="badge" data-team="${matche.awayTeam.id}" src="assets/images/default-team-badge.png">
+            <a href="team.html?id=${matche.awayTeam.id}" class="title truncate navy-text">${matche.awayTeam.name}</a>
+        </div>
+    </div></div>`;
+       
+        if (parseInt(matche.competition.id) == parseInt(competitionId)) {
+            
+            var content = document.querySelector('#' + matche.status.toLowerCase() + ' > .row');
+            
+            if (content) {
+                content.innerHTML = (matche.status.toLowerCase() === 'finished') ? html + content.innerHTML : content.innerHTML + html;
+            }
+        }
+    });
+   
+    document.querySelectorAll('img.badge').forEach(elm => {
+        if (elm.dataset.team) {
+            dbStanding.get(parseInt(elm.dataset.team)).then((item) => {
+                if (item) {
+                    elm.setAttribute('src', item.image);
+                }
+            });
+        }
+    });
+
+    var options = {
+        swipeable: true
+    }
+    var tabs = document.getElementById('tabs-swipe-demo');
+    M.Tabs.init(tabs, options);
 
     hideLoading();
 }

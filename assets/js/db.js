@@ -4,12 +4,11 @@ var dbPromise = idb.open("football", 1, (upgradeDb) => {
             keyPath: 'id'
         });
         team.createIndex('date', 'date');
-        team.createIndex('flag_favorite', 'flag_favorite')
+        team.createIndex('flag_favorite', 'flag_favorite');
 
-        // var favorite = upgradeDb.createObjectStore("team_favorite", {
-        //     keyPath: 'id'
-        // });
-        // favorite.createIndex('date', 'date');
+        var standing = upgradeDb.createObjectStore('standing', {
+          keyPath: 'id'
+        })
     }
 });
 
@@ -54,38 +53,39 @@ const dbTeam = {
     }
 };
 
-// const dbFavorite = {
-//     get: async (id) => {
-//       return (await dbPromise)
-//         .transaction('team_favorite', 'readonly')
-//         .objectStore('team_favorite')
-//         .get(id);
-//     },
-//     getAll: async () => {
-//       return (await dbPromise)
-//         .transaction('team_favorite')
-//         .objectStore('team_favorite')
-//         .getAll();
-//     },
-//     insert: async (data) => {
-//       var tx = (await dbPromise).transaction('team_favorite', 'readwrite');
-//       tx.objectStore('team_favorite').add(data);
-  
-//       return tx.complete;
-//     },
-//     update: async (data) => {
-//       var tx = (await dbPromise).transaction('team_favorite', 'readwrite');
-//       tx.objectStore('team_favorite').put(data);
-  
-//       return tx.complete;
-//     },
-//     delete: async (id) => {
-//       return (await dbPromise)
-//         .transaction('team_favorite', 'readwrite')
-//         .objectStore('team_favorite')
-//         .delete(id);
-//     }
-//   };
+const dbStanding = {
+  get: async (id) => {
+      return (await dbPromise)
+          .transaction('standing', 'readonly')
+          .objectStore('standing')
+          .get(id);
+  },
+  getAll: async () => {
+    return (await dbPromise)
+      .transaction('standing', 'readonly')
+      .objectStore('standing')
+      .getAll();
+  },
+  insert: async (data) => {
+      var tx = (await dbPromise).transaction('standing', 'readwrite');
+      tx.objectStore('standing').add(data);
+
+      return tx.complete;
+  },
+
+  update: async (data) => {
+      var tx = (await dbPromise).transaction('standing', 'readwrite');
+      tx.objectStore('standing').put(data);
+
+      return tx.complete;
+  },
+  delete: async (id) => {
+      return (await dbPromise)
+          .transaction('standing', 'readwrite')
+          .objectStore('standing')
+          .delete(id);
+  }
+};
 
 function getTeamFromDb() {
   return dbTeam.getAll();

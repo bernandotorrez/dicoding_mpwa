@@ -1,15 +1,17 @@
-const CACHE_NAME = "england-premier-cache";
+const CACHE_NAME = "england-premier";
 var urlsToCache = [
   "/",
   "/components/nav.html",
   "/components/bottom-nav.html",
+  "/components/detail-match-nav.html",
   "/index.html",
+  "/detail-match.html",
   "/pages/about.html",
   "/pages/contact.html",
   "/pages/home.html",
+  "/pages/match.html",
   "/pages/favorite.html",
   "/pages/standings.html",
-  "/pages/detail-match.html",
   "/pages/teams.html",
   "/assets/css/materialize.min.css",
   "/assets/css/style.css",
@@ -36,6 +38,10 @@ var urlsToCache = [
   "/assets/favicon/tile310x150.png",
   "/assets/favicon/tile310x310.png",
 ];
+
+function forceHttps(text) {
+  return text.replace(/^http:\/\//i, 'https://');
+}
 
 self.addEventListener("fetch", function (event) {
   const base_url = 'https://api.football-data.org/v2';

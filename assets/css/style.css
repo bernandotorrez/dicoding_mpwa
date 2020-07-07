@@ -288,6 +288,9 @@ img.bottom-navigation-list-item-icon {
 
 .team-detail {
 	display: inline-flex;
+	border: 2px solid var(--primaryColor);
+	border-radius: 4px;
+	padding: 2rem;
 }
 
 .team-detail>.badge-team {
@@ -299,6 +302,7 @@ img.bottom-navigation-list-item-icon {
 .team-detail>.detail {
 	align-self: center;
 	margin: 0px 0 2rem .8rem;
+	padding-top: 2rem;
 	display: flex;
 }
 
@@ -306,6 +310,8 @@ img.bottom-navigation-list-item-icon {
 	font-size: 18px;
 	font-weight: 600;
 	margin-right: 5px;
+	font-weight: bold;
+	color: var(--primaryColor)
 }
 
 @media only screen and (max-width: 992px) {
