@@ -24,7 +24,7 @@ if ("Notification" in window) {
       } else if (result === 'granted') {
         var url = window.location.href;
         if(url.indexOf('index.html') > -1) {
-          showNotifikasiBadge();
+          //showNotifikasiBadge();
         } 
         
         console.log("Notification Feature Granted");

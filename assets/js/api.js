@@ -162,7 +162,7 @@ function viewHtmlTeamsApi(data) {
                         
                     </div>
                     <div class="card-content">
-                        <a href="team.html?id=${team.id}" class="card-title truncate" title="${team.name}">${team.name}</a>
+                        <a href="detail-team.html?id=${window.btoa(team.id)}" class="card-title truncate" title="${team.name}">${team.name}</a>
                         <a class="btn-floating halfway-fab waves-effect waves-light second_color" id="${team.id}" onclick="addFavoriteTeam(this)"><i class="material-icons white-text team">favorite</i></a>
                     </div>
                 </div>
@@ -214,7 +214,7 @@ function viewHtmlTeamsDb(data) {
                         
                     </div>
                     <div class="card-content">
-                        <a href="team.html?id=${team.id}" class="card-title truncate" title="${team.name}">${team.name}</a>
+                        <a href="detail-team.html?id=${window.btoa(team.id)}" class="card-title truncate" title="${team.name}">${team.name}</a>
                         <a class="btn-floating halfway-fab waves-effect waves-light second_color" id="${team.id}" onclick="addFavoriteTeam(this)"><i class="material-icons ${favorited}">favorite</i></a>
                     </div>
                 </div>
@@ -361,4 +361,80 @@ function viewHtmlDetailMatch(data) {
     M.Tabs.init(tabs, options);
 
     hideLoading();
+}
+
+function getDetailTeam() {
+    var url = new URLSearchParams(window.location.search);
+    var id = window.atob(url.get("id"));
+    if (!id) {
+        return error();
+    }
+
+    var loading = document.querySelector(".loading-content");
+    console.log(loading)
+    loading.classList.remove('hide')
+
+    const url_api = `${base_url}/teams/${id}`;
+    if ('caches' in window) {
+        caches.match(url_api).then(function (response) {
+            if (response) {
+                response.json().then(function (data) {
+                    console.log('ambil dari cache detail team')
+                    viewHtmlDetailTeam(data)
+                })
+            } else {
+                fetchApi(url_api)
+                .then(status)
+                .then(json)
+                .then(viewHtmlDetailTeam)
+                .catch(error);
+            }
+        })
+    }
+    
+}
+
+function viewHtmlDetailTeam(data) {
+    const content = document.querySelector("#body-content");
+    var html = '';
+    
+        html += `
+        <div class="nav-content container">
+            <div class="row">
+            <div class="col s12 m12 l12 center">
+                <div class="team-detail"><div class="badge-team">
+                    <img onerror="imgError(this)" class="responsive-img" src="https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg">
+                    </div>
+                    <div class="detail">
+                    <span>Liverpool FC</span>
+                    <a href="#" class="star hide-on-med-and-down"><i class="material-icons"></i></a></div></div>
+            </div>
+            </div>
+         
+            <div class="col s12 m12">
+                <ul id="contact" class="collection with-header" style="border: 2px solid navy; border-radius: 8px">
+                    <li class="collection-header white-text text-center center" style="background-color: var(--primaryColor) !important; border-radius: 8px;"><h5>Contact</h5></li>
+                    <li class="collection-item"><div><strong>Address</strong><span class="secondary-content navy-text">75 Drayton Park London N5 1BU</span></div></li> 
+                    <li class="collection-item"><div>Phone<a href="tel:+44 (020) 76195003" class="secondary-content navy-text">+44 (020) 76195003</a></div></li> 
+                    <li class="collection-item"><div>Email<a href="mailto:info@arsenal.co.uk" class="secondary-content navy-text">info@arsenal.co.uk</a></div></li> 
+                    <li class="collection-item"><div>Website<a href="http://www.arsenal.com" class="secondary-content navy-text">http://www.arsenal.com</a></div></li>
+                    </ul>
+            </div>
+
+            <div class="col s12 m12">
+                <ul id="contact" class="collection with-header" style="border: 2px solid navy; border-radius: 8px">
+                    <li class="collection-header white-text text-center center" style="background-color: var(--primaryColor) !important; border-radius: 8px;"><h5>Player</h5></li>
+                    <li class="collection-item"><div><strong>Address</strong><span class="secondary-content navy-text">75 Drayton Park London N5 1BU</span></div></li> 
+                    <li class="collection-item"><div>Phone<a href="tel:+44 (020) 76195003" class="secondary-content navy-text">+44 (020) 76195003</a></div></li> 
+                    <li class="collection-item"><div>Email<a href="mailto:info@arsenal.co.uk" class="secondary-content navy-text">info@arsenal.co.uk</a></div></li> 
+                    <li class="collection-item"><div>Website<a href="http://www.arsenal.com" class="secondary-content navy-text">http://www.arsenal.com</a></div></li>
+                    </ul>
+            </div>
+        </div>
+        `;
+        hideLoading()
+
+        //content.innerHTML = html;
+    
+        
 }
