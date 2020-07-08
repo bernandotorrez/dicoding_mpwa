@@ -18,7 +18,7 @@ module.exports = {
       named: 'never',
       asyncArrow: 'always'
     }],
-    eqeqeq: ['error', 'smart', { null: 'ignore' }]
+    eqeqeq: ['error', 'smart']
 
   }
 

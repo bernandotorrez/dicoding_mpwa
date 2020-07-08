@@ -1,18 +1,21 @@
-const base_url = "https://api.football-data.org/v2";
-const token = "37f0467b411a4834a7bc2bd0c148e467";
+/* eslint-disable indent */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-trailing-spaces */
+/* eslint-disable no-undef */
+/* eslint-disable camelcase */
+const baseUrl = 'https://api.football-data.org/v2';
+const token = '37f0467b411a4834a7bc2bd0c148e467';
 const competitionId = '2021';
-const api_options = {
-    method: 'GET',
-    headers: {
-        'X-Auth-Token': token
-    },
-}
+const apiOptions = {
+  method: 'GET',
+  headers: {
+    'X-Auth-Token': token
+  }
+};
+
 const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-];
-const colors = [
-    "red", "green", "orange", "grey", "blue"
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
 const MSG_NOT_FOUND = 'Page not Found';
@@ -21,64 +24,64 @@ const MSG_ERROR = 'Ooops, Something went wrong';
 const MSG_NO_FAVORITE = 'Favorite teams is Empty';
 
 const fetchApi = (url) => {
-    return fetch(url, api_options);
-}
+  return fetch(url, apiOptions);
+};
 
 function status(response) {
-    var bodyContent = document.querySelector("#body-content > .container");
-    if (response.status !== 200) {
-        console.log("Error : " + response.status);
-        bodyContent.innerHTML = "<h5 class='center-content center'>" + MSG_ERROR + "</h5>";
-        return Promise.reject(new Error(response.statusText));
-    } else {
-        return Promise.resolve(response);
-    }
+  var bodyContent = document.querySelector('#body-content > .container');
+  if (response.status !== 200) {
+    console.log('Error : ' + response.status);
+    bodyContent.innerHTML = "<h5 class='center-content center'>" + MSG_ERROR + '</h5>';
+    return Promise.reject(new Error(response.statusText));
+  } else {
+    return Promise.resolve(response);
+  }
 }
 
 function json(response) {
-    return response.json();
+  return response.json();
 }
 
 function error() {
-    document.querySelector('#body-content').innerHTML = "<h5 class='center-content center'>" + MSG_ERROR + "</h5>";
-    hideLoading();
+  document.querySelector('#body-content').innerHTML = "<h5 class='center-content center'>" + MSG_ERROR + '</h5>';
+  hideLoading();
 }
 
 function getCompetitionStandings() {
-    const url_api = `${base_url}/competitions/${competitionId}/standings`;
+  const urlApi = `${baseUrl}/competitions/${competitionId}/standings`;
 
-    if ('caches' in window) {
-        caches.match(url_api).then(function (response) {
-            if (response) {
-                response.json().then(function (data) {
-                    console.log('ambil dari cache')
-                    viewHtmlStandings(data)
-                })
-            } else {
-                fetchApi(url_api)
-                    .then(status)
-                    .then(json)
-                    .then(viewHtmlStandings)
-                    .catch(error);
-            }
-        })
-    }
+  if ('caches' in window) {
+    caches.match(urlApi).then(function(response) {
+      if (response) {
+        response.json().then(function(data) {
+          console.log('ambil dari cache');
+          viewHtmlStandings(data);
+        });
+      } else {
+        fetchApi(urlApi)
+          .then(status)
+          .then(json)
+          .then(viewHtmlStandings)
+          .catch(error);
+      }
+    });
+  }
 }
 
 function viewHtmlStandings(data) {
-    const {standings} = data;
-    standings.forEach(function (standing) {
-        var html = `<div class="row">`;
-        standing.table.forEach(function (table) {
-            var crestUrl = (table.team.crestUrl)?forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
+  const {standings} = data;
+  standings.forEach(function(standing) {
+    var html = '<div class="row">';
+    standing.table.forEach(function(table) {
+      var crestUrl = (table.team.crestUrl)?forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
 
-            var team_name = table.team.name;
-            
-            if(team_name.length >= 20) {
-               team_name = team_name.substring(0, 15)+'...';
-            }
+      var team_name = table.team.name;
 
-            html += `<div class="col s12 l6">
+      if (team_name.length >= 20) {
+        team_name = team_name.substring(0, 15) + '...';
+      }
+
+      html += `<div class="col s12 l6">
             <a href="detail-match.html?id=${window.btoa(table.team.id)}" class="card-title">
             <div class="card hoverable horizontal">
                 <div class="card-image waves-effect waves-block waves-light">
@@ -103,59 +106,56 @@ function viewHtmlStandings(data) {
             </div>
             </a>
             </div>`;
-
-        });
-        html += '</div>';
-    
-        var content = document.querySelector('#' + standing.type.toLowerCase());
-        content.innerHTML = html;
     });
+    html += '</div>';
 
-    standings[0].table.forEach(function(table) {
-        dbStanding.get(table.team.id).then(function(data) {
-            if(!data) {
-                var crestUrl = (table.team.crestUrl)?forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
-                dbStanding.insert({
-                    id: table.team.id,
-                    name: table.team.name,
-                    image: crestUrl
-                })
-            }
-        })
-    })
+    var content = document.querySelector('#' + standing.type.toLowerCase());
+    content.innerHTML = html;
+  });
 
-    var options = {
-        swipeable: true
-    }
-    var tabs = document.getElementById('tabs-swipe-demo');
-    M.Tabs.init(tabs, options);
+  standings[0].table.forEach(function(table) {
+    dbStanding.get(table.team.id).then(function(data) {
+      if (!data) {
+        var crestUrl = (table.team.crestUrl)?forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
+        dbStanding.insert({
+          id: table.team.id,
+          name: table.team.name,
+          image: crestUrl
+        });
+      }
+    });
+  });
 
-    hideLoading();
+  var options = {
+    swipeable: true
+  };
+  var tabs = document.getElementById('tabs-swipe-demo');
+  M.Tabs.init(tabs, options);
+
+  hideLoading();
 }
 
 async function getTeams() {
-    const url_api = `${base_url}/teams`;
-    const db = await getTeamFromDb();
+  const urlApi = `${baseUrl}/teams`;
+  const db = await getTeamFromDb();
 
-    if (db.length > 0) {
-        viewHtmlTeamsDb(db);
-    } else {
-        fetchApi(url_api)
-            .then(status)
-            .then(json)
-            .then(viewHtmlTeamsApi)
-            .catch(error);
-    }
+  if (db.length > 0) {
+    viewHtmlTeamsDb(db);
+  } else {
+    fetchApi(urlApi)
+      .then(status)
+      .then(json)
+      .then(viewHtmlTeamsApi)
+      .catch(error);
+  }
 }
 
 function viewHtmlTeamsApi(data) {
+  var html = '<div class="container"><div class="row">';
+  data.teams.forEach(function(team) {
+    var crestUrl = (team.crestUrl) ? forceHttps(team.crestUrl) : 'assets/images/default-team-badge.png';
 
-    var html = '<div class="container"><div class="row">';
-    data.teams.forEach(function (team) {
-
-        var crestUrl = (team.crestUrl) ? forceHttps(team.crestUrl) : 'assets/images/default-team-badge.png';
-
-        html += `<div class="col s6 m4 l3">
+    html += `<div class="col s6 m4 l3">
                 <div class="card team hoverable">
                     <div class="card-image center waves-effect waves-block waves-light">
                         <img onerror="imgError(this)" src="${crestUrl}">
@@ -168,46 +168,45 @@ function viewHtmlTeamsApi(data) {
                 </div>
             </div>`;
 
-        dbTeam.get(team.id).then((t) => {
-            if (!t) {
-                dbTeam.insert({
-                    id: team.id,
-                    name: team.name,
-                    image: (team.crestUrl) ? crestUrl : null,
-                    flag_favorite: 0,
-                    created: new Date().getTime()
-                });
-            } else if (!t.image) {
-                dbTeam.update({
-                    id: team.id,
-                    name: team.name,
-                    image: (team.crestUrl) ? crestUrl : null,
-                    flag_favorite: t.flag_favorite,
-                    created: new Date().getTime()
-                });
-            }
+    dbTeam.get(team.id).then((t) => {
+      if (!t) {
+        dbTeam.insert({
+          id: team.id,
+          name: team.name,
+          image: (team.crestUrl) ? crestUrl : null,
+          flag_favorite: 0,
+          created: new Date().getTime()
         });
+      } else if (!t.image) {
+        dbTeam.update({
+          id: team.id,
+          name: team.name,
+          image: (team.crestUrl) ? crestUrl : null,
+          flag_favorite: t.flag_favorite,
+          created: new Date().getTime()
+        });
+      }
     });
-    html += '</div></div>';
-    document.querySelector('#body-content').innerHTML = html;
+  });
+  html += '</div></div>';
+  document.querySelector('#body-content').innerHTML = html;
 
-    hideLoading();
+  hideLoading();
 }
 
 function viewHtmlTeamsDb(data) {
+  var html = '<div class="container"><div class="row">';
 
-    var html = '<div class="container"><div class="row">';
+  data.forEach(function(team) {
+    let favorited = '';
+    if (team.flag_favorite == 0) {
+      favorited = 'white-text';
+    } else {
+      favorited = 'navy-text';
+    }
+    var crestUrl = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
 
-    data.forEach(function (team) {
-        let favorited = '';
-        if (team.flag_favorite == 0) {
-            favorited = 'white-text';
-        } else {
-            favorited = 'navy-text';
-        }
-        var crestUrl = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
-
-        html += `<div class="col s6 m4 l3">
+    html += `<div class="col s6 m4 l3">
                 <div class="card team hoverable">
                     <div class="card-image center waves-effect waves-block waves-light">
                         <img onerror="imgError(this)" src="${crestUrl}">
@@ -219,36 +218,35 @@ function viewHtmlTeamsDb(data) {
                     </div>
                 </div>
             </div>`;
-    });
-    html += '</div></div>';
-    document.querySelector('#body-content').innerHTML = html;
+  });
+  html += '</div></div>';
+  document.querySelector('#body-content').innerHTML = html;
 
-    hideLoading();
+  hideLoading();
 }
 
 async function getFavoritedTeam() {
-    const db = await getFavoritedTeamFromDb(1);
+  const db = await getFavoritedTeamFromDb(1);
 
-    viewHtmlFavoritedTeam(db);
+  viewHtmlFavoritedTeam(db);
 }
 
 function viewHtmlFavoritedTeam(data) {
+  var html = '<div class="container"><div class="row">';
 
-    var html = '<div class="container"><div class="row">';
+  if (data.length == 0) {
+    document.querySelector('#body-content').innerHTML = "<h5 class='center-content center'>" + MSG_NO_FAVORITE + '</h5>';
+  } else {
+    data.forEach(function(team) {
+      let favorited = '';
+      if (team.flag_favorite == 0) {
+        favorited = 'white-text';
+      } else {
+        favorited = 'navy-text';
+      }
+      var crestUrl = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
 
-    if (data.length == 0) {
-        document.querySelector('#body-content').innerHTML = "<h5 class='center-content center'>" + MSG_NO_FAVORITE + "</h5>";
-    } else {
-        data.forEach(function (team) {
-            let favorited = '';
-            if (team.flag_favorite == 0) {
-                favorited = 'white-text';
-            } else {
-                favorited = 'navy-text';
-            }
-            var crestUrl = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
-
-            html += `<div class="col s6 m4 l3">
+      html += `<div class="col s6 m4 l3">
                     <div class="card team hoverable">
                         <div class="card-image center waves-effect waves-block waves-light">
                             <img onerror="imgError(this)" src="${crestUrl}">
@@ -260,61 +258,61 @@ function viewHtmlFavoritedTeam(data) {
                         </div>
                     </div>
                 </div>`;
-        });
-        html += '</div></div>';
-        document.querySelector('#body-content').innerHTML = html;
-    }
+    });
+    html += '</div></div>';
+    document.querySelector('#body-content').innerHTML = html;
+  }
 
-    hideLoading();
+  hideLoading();
 }
 
 function getDetailMatch() {
-    var url = new URLSearchParams(window.location.search);
-    var id = window.atob(url.get("id"));
-    if (!id) {
-        return error();
-    }
+  var url = new URLSearchParams(window.location.search);
+  var id = window.atob(url.get('id'));
+  if (!id) {
+    return error();
+  }
 
-    var loading = document.querySelector(".loading-content");
-    loading.classList.remove('hide')
+  var loading = document.querySelector('.loading-content');
+  loading.classList.remove('hide');
 
-    const url_api = `${base_url}/teams/${id}/matches`;
-    if ('caches' in window) {
-        caches.match(url_api).then(function (response) {
-            if (response) {
-                response.json().then(function (data) {
-                    console.log('ambil dari cache detail match')
-                    viewHtmlDetailMatch(data)
-                })
-            } else {
-                fetchApi(url_api)
-                .then(status)
-                .then(json)
-                .then(viewHtmlDetailMatch)
-                .catch(error);
-            }
-        })
-    }
-   
-        dbStanding.get(parseInt(id)).then((team) => {
-            var image = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
-            var content = document.querySelector('.team-detail');
-            content.innerHTML = `<div class="badge-team">
+  const urlApi = `${baseUrl}/teams/${id}/matches`;
+  if ('caches' in window) {
+    caches.match(urlApi).then(function(response) {
+      if (response) {
+        response.json().then(function(data) {
+          console.log('ambil dari cache detail match');
+          viewHtmlDetailMatch(data);
+        });
+      } else {
+        fetchApi(urlApi)
+          .then(status)
+          .then(json)
+          .then(viewHtmlDetailMatch)
+          .catch(error);
+      }
+    });
+  }
+
+  dbStanding.get(parseInt(id)).then((team) => {
+    var image = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
+    var content = document.querySelector('.team-detail');
+    content.innerHTML = `<div class="badge-team">
             <img onerror="imgError(this)" class="responsive-img" src="${image}">
           </div>
           <div class="detail">
             <span>${team.name}</span>
             <a href="#" class="star hide-on-med-and-down"><i class="material-icons"></i></div></a>`;
-        });
+  });
 }
 
 function viewHtmlDetailMatch(data) {
-    data.matches.forEach(match => {
-        var scoreHome = (match.score.fullTime.homeTeam == null) ? '-' : match.score.fullTime.homeTeam;
-        var scoreAway = (match.score.fullTime.awayTeam == null) ? '-' : match.score.fullTime.awayTeam;
-        var date = new Date(match.utcDate);
+  data.matches.forEach(match => {
+    var scoreHome = (match.score.fullTime.homeTeam == null) ? '-' : match.score.fullTime.homeTeam;
+    var scoreAway = (match.score.fullTime.awayTeam == null) ? '-' : match.score.fullTime.awayTeam;
+    var date = new Date(match.utcDate);
 
-        var html = `<div class="col s12 m12 l6 center">
+    var html = `<div class="col s12 m12 l6 center">
         <div class="card hoverable horizontal match">
         <div class="card-image left waves-effect waves-block waves-light">
             <img onerror="imgError(this)" class="badge" data-team="${match.homeTeam.id}" src="assets/images/default-team-badge.png">
@@ -333,77 +331,75 @@ function viewHtmlDetailMatch(data) {
             <a href="team.html?id=${match.awayTeam.id}" class="title truncate navy-text">${match.awayTeam.name}</a>
         </div>
     </div></div>`;
-       
-        if (parseInt(match.competition.id) == parseInt(competitionId)) {
-            
-            var content = document.querySelector('#' + match.status.toLowerCase() + ' > .row');
-            
-            if (content) {
-                content.innerHTML = (match.status.toLowerCase() === 'finished') ? html + content.innerHTML : content.innerHTML + html;
-            }
-        }
-    });
-   
-    document.querySelectorAll('img.badge').forEach(elm => {
-        if (elm.dataset.team) {
-            dbStanding.get(parseInt(elm.dataset.team)).then((item) => {
-                if (item) {
-                    elm.setAttribute('src', item.image);
-                }
-            });
-        }
-    });
 
-    var options = {
-        swipeable: true
+    if (parseInt(match.competition.id) == parseInt(competitionId)) {
+      var content = document.querySelector('#' + match.status.toLowerCase() + ' > .row');
+
+      if (content) {
+        content.innerHTML = (match.status.toLowerCase() === 'finished') ? html + content.innerHTML : content.innerHTML + html;
+      }
     }
-    var tabs = document.getElementById('tabs-swipe-demo');
-    M.Tabs.init(tabs, options);
+  });
 
-    hideLoading();
+  document.querySelectorAll('img.badge').forEach(elm => {
+    if (elm.dataset.team) {
+      dbStanding.get(parseInt(elm.dataset.team)).then((item) => {
+        if (item) {
+          elm.setAttribute('src', item.image);
+        }
+      });
+    }
+  });
+
+  var options = {
+    swipeable: true
+  };
+  var tabs = document.getElementById('tabs-swipe-demo');
+  M.Tabs.init(tabs, options);
+
+  hideLoading();
 }
 
 function getDetailTeam() {
-    var url = new URLSearchParams(window.location.search);
-    var id = window.atob(url.get("id"));
-    if (!id) {
-        return error();
-    }
+  var url = new URLSearchParams(window.location.search);
+  var id = window.atob(url.get('id'));
+  if (!id) {
+    return error();
+  }
 
-    var loading = document.querySelector(".loading-content");
-    console.log(loading)
-    loading.classList.remove('hide')
+  var loading = document.querySelector('.loading-content');
 
-    const url_api = `${base_url}/teams/${id}`;
-    if ('caches' in window) {
-        caches.match(url_api).then(function (response) {
-            if (response) {
-                response.json().then(function (data) {
-                    console.log('ambil dari cache detail team')
-                    viewHtmlDetailTeam(data)
-                })
-            } else {
-                fetchApi(url_api)
-                .then(status)
-                .then(json)
-                .then(viewHtmlDetailTeam)
-                .catch(error);
-            }
-        })
-    }
-    
+  loading.classList.remove('hide');
+
+  const urlApi = `${baseUrl}/teams/${id}`;
+  if ('caches' in window) {
+    caches.match(urlApi).then(function(response) {
+      if (response) {
+        response.json().then(function(data) {
+          console.log('ambil dari cache detail team');
+          viewHtmlDetailTeam(data);
+        });
+      } else {
+        fetchApi(urlApi)
+          .then(status)
+          .then(json)
+          .then(viewHtmlDetailTeam)
+          .catch(error);
+      }
+    });
+  }
 }
 
 function viewHtmlDetailTeam(data) {
-    const content = document.querySelector("#body-content");
-    var html = '';
-    
-        html += `
+  const content = document.querySelector('#body-content');
+  var html = '';
+  var image = (data.crestUrl) ? forceHttps(data.crestUrl) : 'assets/images/default-team-badge.png';
+  html += `
         <div class="nav-content container">
             <div class="row">
             <div class="col s12 m12 l12 center">
                 <div class="team-detail"><div class="badge-team">
-                    <img onerror="imgError(this)" class="responsive-img" src="https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg">
+                    <img onerror="imgError(this)" class="responsive-img" src="${image}">
                     </div>
                     <div class="detail">
                     <span>Liverpool FC</span>
@@ -414,27 +410,36 @@ function viewHtmlDetailTeam(data) {
             <div class="col s12 m12">
                 <ul id="contact" class="collection with-header" style="border: 2px solid navy; border-radius: 8px">
                     <li class="collection-header white-text text-center center" style="background-color: var(--primaryColor) !important; border-radius: 8px;"><h5>Contact</h5></li>
-                    <li class="collection-item"><div><strong>Address</strong><span class="secondary-content navy-text">75 Drayton Park London N5 1BU</span></div></li> 
-                    <li class="collection-item"><div>Phone<a href="tel:+44 (020) 76195003" class="secondary-content navy-text">+44 (020) 76195003</a></div></li> 
-                    <li class="collection-item"><div>Email<a href="mailto:info@arsenal.co.uk" class="secondary-content navy-text">info@arsenal.co.uk</a></div></li> 
-                    <li class="collection-item"><div>Website<a href="http://www.arsenal.com" class="secondary-content navy-text">http://www.arsenal.com</a></div></li>
+                    <li class="collection-item"><div><strong>Address</strong><span class="secondary-content navy-text"><u>${data.address}</u></span></div></li> 
+                    <li class="collection-item"><div><strong>Phone</strong><a href="tel:${data.phone}" class="secondary-content navy-text"><u>${data.phone}</u></a></div></li> 
+                    <li class="collection-item"><div><strong>Email</strong><a href="mailto:${data.email}" class="secondary-content navy-text"><u>${data.email}</u></a></div></li> 
+                    <li class="collection-item"><div><strong>Website</strong><a href="${data.website}" class="secondary-content navy-text" target="_blank"><u>${data.website}</u></a></div></li>
                     </ul>
             </div>
 
             <div class="col s12 m12">
                 <ul id="contact" class="collection with-header" style="border: 2px solid navy; border-radius: 8px">
                     <li class="collection-header white-text text-center center" style="background-color: var(--primaryColor) !important; border-radius: 8px;"><h5>Player</h5></li>
-                    <li class="collection-item"><div><strong>Address</strong><span class="secondary-content navy-text">75 Drayton Park London N5 1BU</span></div></li> 
-                    <li class="collection-item"><div>Phone<a href="tel:+44 (020) 76195003" class="secondary-content navy-text">+44 (020) 76195003</a></div></li> 
-                    <li class="collection-item"><div>Email<a href="mailto:info@arsenal.co.uk" class="secondary-content navy-text">info@arsenal.co.uk</a></div></li> 
-                    <li class="collection-item"><div>Website<a href="http://www.arsenal.com" class="secondary-content navy-text">http://www.arsenal.com</a></div></li>
-                    </ul>
+
+                    `;
+                    
+            data.squad.forEach(function(player) {
+                if (player.role == 'PLAYER') {
+                var shirtNumber = (player.shirtNumber) ? (player.shirtNumber) : '';
+                html += `<li class="collection-item avatar">
+                            <i class="material-icons circle secondary-color-text" style="background-color: var(--primaryColor)">people</i>
+                            <span class="title navy-text"><strong>${player.name} (${shirtNumber})</strong></span>
+                            <p>${player.position}</p>
+                        </li>`;
+                }
+            });
+
+                `</ul>
             </div>
+            
         </div>
         `;
-        hideLoading()
+                hideLoading();
 
-        //content.innerHTML = html;
-    
-        
+                content.innerHTML = html;
 }
