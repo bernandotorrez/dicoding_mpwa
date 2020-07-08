@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Informasi Seputar Sepak Bola",
   "main": "index.html",
-  "dependencies": {},
+  "dependencies": {
+    "web-push": "^3.4.4"
+  },
   "devDependencies": {
     "eslint": "^7.3.1",
     "eslint-config-standard": "^14.1.1",

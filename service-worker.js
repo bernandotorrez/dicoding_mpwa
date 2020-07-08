@@ -56,10 +56,12 @@ self.addEventListener("install", function (event) {
 
 self.addEventListener("fetch", function (event) {
   const base_url = 'https://api.football-data.org/v2';
-  const my_url = 'detail-match.html?id';
+  const standing_url = 'detail-match.html?id';
+  const team_url = 'detail-team.html?id';
   const image_api = forceHttps('https://upload.wikimedia.org');
 
-  if (event.request.url.indexOf(base_url) > -1 || event.request.url.indexOf(image_api) > -1 || event.request.url.indexOf(my_url) > -1) {
+  if (event.request.url.indexOf(base_url) > -1 || event.request.url.indexOf(image_api) > -1 
+  || event.request.url.indexOf(standing_url) > -1 || event.request.url.indexOf(team_url) > -1) {
     event.respondWith(
       caches.open(CACHE_NAME).then(function(cache) {
         return cache.match(event.request).then(function(response) {

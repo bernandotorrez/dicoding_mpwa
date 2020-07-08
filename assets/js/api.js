@@ -71,15 +71,24 @@ function viewHtmlStandings(data) {
         var html = `<div class="row">`;
         standing.table.forEach(function (table) {
             var crestUrl = (table.team.crestUrl)?forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
-    
+
+            var team_name = table.team.name;
+            
+            if(team_name.length >= 20) {
+               team_name = team_name.substring(0, 15)+'...';
+            }
+
             html += `<div class="col s12 l6">
+            <a href="detail-match.html?id=${window.btoa(table.team.id)}" class="card-title">
             <div class="card hoverable horizontal">
                 <div class="card-image waves-effect waves-block waves-light">
                     <img onerror="imgError(this)" class="badge" src="${crestUrl}">
                 </div>
                 <div class="card-stacked">
                     <div class="card-content">
-                        <a href="detail-match.html?id=${window.btoa(table.team.id)}" class="card-title">${table.team.name}</a>
+                        <div class="card-title hide-on-med-and-down">${team_name}</div>
+
+                        <div class="card-title hide-on-large-only">${table.team.name}</div>
                         <ul>
                             <li><div title="Matches Played" class="white-text">MP</div><div class="val white-text text-center">${table.playedGames}</div></li>
                             <li><div title="Won" class="white-text">W</div><div class="val white-text">${table.won}</div></li>
@@ -92,6 +101,7 @@ function viewHtmlStandings(data) {
                     </div>
                 </div>
             </div>
+            </a>
             </div>`;
 
         });
@@ -285,13 +295,12 @@ function getDetailMatch() {
             }
         })
     }
-
-    
    
         dbStanding.get(parseInt(id)).then((team) => {
+            var image = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
             var content = document.querySelector('.team-detail');
             content.innerHTML = `<div class="badge-team">
-            <img onerror="imgError(this)" class="responsive-img" src="${team.image}">
+            <img onerror="imgError(this)" class="responsive-img" src="${image}">
           </div>
           <div class="detail">
             <span>${team.name}</span>
@@ -315,8 +324,8 @@ function viewHtmlDetailMatch(data) {
           <div class="card-content center">
             <span class="date white-text" date="${match.utcDate}">${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}</span>
             <time class="white-text">${date.getHours()}:${date.getMinutes()}</time>
-            <h3 class="score white-text hide-on-med-and-down">${scoreHome} : ${scoreAway}</h3>
-            <h5 class="score show-on-small white-text">${scoreHome} : ${scoreAway}</h5>
+            <h3 class="score white-text hide-on-small-only">${scoreHome} : ${scoreAway}</h3>
+            <h5 class="score hide-on-med-and-up white-text">${scoreHome} : ${scoreAway}</h5>
           </div>
         </div>
         <div class="card-image right waves-effect waves-block waves-light">

@@ -22,7 +22,11 @@ if ("Notification" in window) {
           console.error("User close the Box Permission");
           return;
       } else if (result === 'granted') {
- 
+        var url = window.location.href;
+        if(url.indexOf('index.html') > -1) {
+          showNotifikasiBadge();
+        } 
+        
         console.log("Notification Feature Granted");
           
       }
@@ -37,6 +41,7 @@ function showNotifikasiBadge() {
   const options = {
       'body': 'Hope you Enjoy to Use this Application',
       'badge': '/icon.jpg',
+      'icon': '/icon.jpg',
       'actions': [
         {
             'action': 'no-action',

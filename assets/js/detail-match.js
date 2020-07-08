@@ -47,7 +47,8 @@ document.addEventListener('DOMContentLoaded', function () {
         loading.classList.remove("hide");
         content.innerHTML = "";
         
+        getDetailMatch();
       }
 
-      getDetailMatch();
+      
 })
