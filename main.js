@@ -3,14 +3,14 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker
       .register("/service-worker.js")
       .then(function () {
-        console.log("Pendaftaran ServiceWorker berhasil");
+        console.log("Service Worker Registered Successfully");
       })
       .catch(function () {
-        console.log("Pendaftaran ServiceWorker gagal");
+        console.log("Service Worker Failed to Register");
       });
   });
 } else {
-  console.log("ServiceWorker belum didukung browser ini.");
+  console.log("Browser dont support Service Worker");
 }
 
 if ("Notification" in window) {
@@ -54,7 +54,7 @@ function showNotifikasiBadge() {
           registration.showNotification(title, options);
       });
   } else {
-      console.error('Fitur notifikasi tidak diijinkan.');
+      console.error('Notification Feature Granted');
   }
 }
 
