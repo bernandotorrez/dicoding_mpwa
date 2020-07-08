@@ -20,6 +20,8 @@ var urlsToCache = [
   "/assets/images/default-team-badge.png",
   "/assets/js/api.js",
   "/assets/js/db.js",
+  "/assets/js/detail-match.js",
+  "/assets/js/helper.js",
   "/assets/js/idb.js",
   "/assets/js/jquery-2.1.1.min.js",
   "/assets/js/materialize.min.js",
@@ -43,10 +45,21 @@ function forceHttps(text) {
   return text.replace(/^http:\/\//i, 'https://');
 }
 
+self.addEventListener("install", function (event) {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(function (cache) {
+      return cache.addAll(urlsToCache);
+    })
+  );
+});
+
+
 self.addEventListener("fetch", function (event) {
   const base_url = 'https://api.football-data.org/v2';
+  const my_url = 'detail-match.html?id';
   const image_api = forceHttps('https://upload.wikimedia.org');
-  if (event.request.url.indexOf(base_url) > -1 || event.request.url.indexOf(image_api) > -1) {
+
+  if (event.request.url.indexOf(base_url) > -1 || event.request.url.indexOf(image_api) > -1 || event.request.url.indexOf(my_url) > -1) {
     event.respondWith(
       caches.open(CACHE_NAME).then(function(cache) {
         return cache.match(event.request).then(function(response) {
@@ -72,11 +85,24 @@ self.addEventListener("fetch", function (event) {
   }
 });
 
-self.addEventListener("install", function (event) {
+self.addEventListener('push', function(event) {
+  var body;
+  if (event.data) {
+    body = event.data.text();
+  } else {
+    body = 'Push message no payload';
+  }
+  var options = {
+    body: body,
+    icon: '/icon.jpg',
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: 1
+    }
+  };
   event.waitUntil(
-    caches.open(CACHE_NAME).then(function (cache) {
-      return cache.addAll(urlsToCache);
-    })
+    self.registration.showNotification('Push Notification', options)
   );
 });
 

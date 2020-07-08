@@ -79,7 +79,7 @@ function viewHtmlStandings(data) {
                 </div>
                 <div class="card-stacked">
                     <div class="card-content">
-                        <a href="detail-match.html?id=${window.btoa(table.team.id)}#match" class="card-title">${table.team.name}</a>
+                        <a href="detail-match.html?id=${window.btoa(table.team.id)}" class="card-title">${table.team.name}</a>
                         <ul>
                             <li><div title="Matches Played" class="white-text">MP</div><div class="val white-text text-center">${table.playedGames}</div></li>
                             <li><div title="Won" class="white-text">W</div><div class="val white-text">${table.won}</div></li>
@@ -265,13 +265,28 @@ function getDetailMatch() {
         return error();
     }
 
-    const url_api = `${base_url}/teams/${id}/matches`;
+    var loading = document.querySelector(".loading-content");
+    loading.classList.remove('hide')
 
-    fetchApi(url_api)
-        .then(status)
-        .then(json)
-        .then(viewHtmlDetailMatch)
-        .catch(error);
+    const url_api = `${base_url}/teams/${id}/matches`;
+    if ('caches' in window) {
+        caches.match(url_api).then(function (response) {
+            if (response) {
+                response.json().then(function (data) {
+                    console.log('ambil dari cache detail match')
+                    viewHtmlDetailMatch(data)
+                })
+            } else {
+                fetchApi(url_api)
+                .then(status)
+                .then(json)
+                .then(viewHtmlDetailMatch)
+                .catch(error);
+            }
+        })
+    }
+
+    
    
         dbStanding.get(parseInt(id)).then((team) => {
             var content = document.querySelector('.team-detail');
@@ -285,36 +300,37 @@ function getDetailMatch() {
 }
 
 function viewHtmlDetailMatch(data) {
-    data.matches.forEach(matche => {
-        var scoreHome = (matche.score.fullTime.homeTeam == null) ? '-' : matche.score.fullTime.homeTeam;
-        var scoreAway = (matche.score.fullTime.awayTeam == null) ? '-' : matche.score.fullTime.awayTeam;
-        var date = new Date(matche.utcDate);
+    data.matches.forEach(match => {
+        var scoreHome = (match.score.fullTime.homeTeam == null) ? '-' : match.score.fullTime.homeTeam;
+        var scoreAway = (match.score.fullTime.awayTeam == null) ? '-' : match.score.fullTime.awayTeam;
+        var date = new Date(match.utcDate);
 
         var html = `<div class="col s12 m12 l6 center">
         <div class="card hoverable horizontal match">
         <div class="card-image left waves-effect waves-block waves-light">
-            <img onerror="imgError(this)" class="badge" data-team="${matche.homeTeam.id}" src="assets/images/default-team-badge.png">
-            <a href="team.html?id=${matche.homeTeam.id}" class="title truncate navy-text">${matche.homeTeam.name}</a>
+            <img onerror="imgError(this)" class="badge" data-team="${match.homeTeam.id}" src="assets/images/default-team-badge.png">
+            <a href="team.html?id=${match.homeTeam.id}" class="title truncate navy-text">${match.homeTeam.name}</a>
         </div>
         <div class="card-stacked">
           <div class="card-content center">
-            <span class="date white-text" date="${matche.utcDate}">${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}</span>
+            <span class="date white-text" date="${match.utcDate}">${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}</span>
             <time class="white-text">${date.getHours()}:${date.getMinutes()}</time>
-            <h3 class="score white-text">${scoreHome} : ${scoreAway}</h3>
+            <h3 class="score white-text hide-on-med-and-down">${scoreHome} : ${scoreAway}</h3>
+            <h5 class="score show-on-small white-text">${scoreHome} : ${scoreAway}</h5>
           </div>
         </div>
         <div class="card-image right waves-effect waves-block waves-light">
-            <img onerror="imgError(this)" class="badge" data-team="${matche.awayTeam.id}" src="assets/images/default-team-badge.png">
-            <a href="team.html?id=${matche.awayTeam.id}" class="title truncate navy-text">${matche.awayTeam.name}</a>
+            <img onerror="imgError(this)" class="badge" data-team="${match.awayTeam.id}" src="assets/images/default-team-badge.png">
+            <a href="team.html?id=${match.awayTeam.id}" class="title truncate navy-text">${match.awayTeam.name}</a>
         </div>
     </div></div>`;
        
-        if (parseInt(matche.competition.id) == parseInt(competitionId)) {
+        if (parseInt(match.competition.id) == parseInt(competitionId)) {
             
-            var content = document.querySelector('#' + matche.status.toLowerCase() + ' > .row');
+            var content = document.querySelector('#' + match.status.toLowerCase() + ' > .row');
             
             if (content) {
-                content.innerHTML = (matche.status.toLowerCase() === 'finished') ? html + content.innerHTML : content.innerHTML + html;
+                content.innerHTML = (match.status.toLowerCase() === 'finished') ? html + content.innerHTML : content.innerHTML + html;
             }
         }
     });

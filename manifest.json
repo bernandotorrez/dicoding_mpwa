@@ -7,6 +7,7 @@
     "display": "standalone",
     "orientation": "portrait",
     "start_url": "/index.html",
+    "gcm_sender_id": "489407451958",
     "icons": [
         {
             "src": "/assets/favicon/pwa-192x192.png",
