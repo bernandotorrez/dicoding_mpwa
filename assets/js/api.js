@@ -69,11 +69,11 @@ function getCompetitionStandings() {
 }
 
 function viewHtmlStandings(data) {
-  const {standings} = data;
+  const { standings } = data;
   standings.forEach(function(standing) {
     var html = '<div class="row">';
     standing.table.forEach(function(table) {
-      var crestUrl = (table.team.crestUrl)?forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
+      var crestUrl = (table.team.crestUrl) ? forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
 
       var team_name = table.team.name;
 
@@ -116,7 +116,7 @@ function viewHtmlStandings(data) {
   standings[0].table.forEach(function(table) {
     dbStanding.get(table.team.id).then(function(data) {
       if (!data) {
-        var crestUrl = (table.team.crestUrl)?forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
+        var crestUrl = (table.team.crestUrl) ? forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
         dbStanding.insert({
           id: table.team.id,
           name: table.team.name,
@@ -157,10 +157,13 @@ function viewHtmlTeamsApi(data) {
 
     html += `<div class="col s6 m4 l3">
                 <div class="card team hoverable">
+                    
                     <div class="card-image center waves-effect waves-block waves-light">
+                      <a href="detail-team.html?id=${window.btoa(team.id)}">
                         <img onerror="imgError(this)" src="${crestUrl}">
-                        
+                      </a>   
                     </div>
+                 
                     <div class="card-content">
                         <a href="detail-team.html?id=${window.btoa(team.id)}" class="card-title truncate" title="${team.name}">${team.name}</a>
                         <a class="btn-floating halfway-fab waves-effect waves-light second_color" id="${team.id}" onclick="addFavoriteTeam(this)"><i class="material-icons white-text team">favorite</i></a>
@@ -199,7 +202,7 @@ function viewHtmlTeamsDb(data) {
 
   data.forEach(function(team) {
     let favorited = '';
-    if (team.flag_favorite == 0) {
+    if (team.flag_favorite === 0) {
       favorited = 'white-text';
     } else {
       favorited = 'navy-text';
@@ -208,10 +211,13 @@ function viewHtmlTeamsDb(data) {
 
     html += `<div class="col s6 m4 l3">
                 <div class="card team hoverable">
-                    <div class="card-image center waves-effect waves-block waves-light">
+                  
+                  <div class="card-image center waves-effect waves-block waves-light">
+                      <a href="detail-team.html?id=${window.btoa(team.id)}">
                         <img onerror="imgError(this)" src="${crestUrl}">
-                        
-                    </div>
+                      </a> 
+                  </div>
+                  
                     <div class="card-content">
                         <a href="detail-team.html?id=${window.btoa(team.id)}" class="card-title truncate" title="${team.name}">${team.name}</a>
                         <a class="btn-floating halfway-fab waves-effect waves-light second_color" id="${team.id}" onclick="addFavoriteTeam(this)"><i class="material-icons ${favorited}">favorite</i></a>
@@ -293,20 +299,12 @@ function getDetailMatch() {
       }
     });
   }
-
-  dbStanding.get(parseInt(id)).then((team) => {
-    var image = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
-    var content = document.querySelector('.team-detail');
-    content.innerHTML = `<div class="badge-team">
-            <img onerror="imgError(this)" class="responsive-img" src="${image}">
-          </div>
-          <div class="detail">
-            <span>${team.name}</span>
-            <a href="#" class="star hide-on-med-and-down"><i class="material-icons"></i></div></a>`;
-  });
 }
 
 function viewHtmlDetailMatch(data) {
+  var url = new URLSearchParams(window.location.search);
+  var id = window.atob(url.get('id'));
+
   data.matches.forEach(match => {
     var scoreHome = (match.score.fullTime.homeTeam == null) ? '-' : match.score.fullTime.homeTeam;
     var scoreAway = (match.score.fullTime.awayTeam == null) ? '-' : match.score.fullTime.awayTeam;
@@ -341,11 +339,24 @@ function viewHtmlDetailMatch(data) {
     }
   });
 
+  dbStanding.get(parseInt(id)).then((team) => {
+    var image = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
+    var content = document.querySelector('.team-detail');
+    content.innerHTML = `<div class="badge-team">
+            <img onerror="imgError(this)" class="responsive-img" src="${image}">
+          </div>
+          <div class="detail">
+            <span>${team.name}</span>
+            <a href="#" class="star hide-on-med-and-down"><i class="material-icons"></i></div></a>`;
+  });
+
   document.querySelectorAll('img.badge').forEach(elm => {
     if (elm.dataset.team) {
       dbStanding.get(parseInt(elm.dataset.team)).then((item) => {
         if (item) {
           elm.setAttribute('src', item.image);
+        } else {
+          elm.setAttribute('src', 'assets/images/default-team-badge.png');
         }
       });
     }
@@ -394,6 +405,7 @@ function viewHtmlDetailTeam(data) {
   const content = document.querySelector('#body-content');
   var html = '';
   var image = (data.crestUrl) ? forceHttps(data.crestUrl) : 'assets/images/default-team-badge.png';
+  var phone = (data.phone) ? (data.phone) : '';
   html += `
         <div class="nav-content container">
             <div class="row">
@@ -411,20 +423,20 @@ function viewHtmlDetailTeam(data) {
                 <ul id="contact" class="collection with-header" style="border: 2px solid navy; border-radius: 8px">
                     <li class="collection-header white-text text-center center" style="background-color: var(--primaryColor) !important; border-radius: 8px;"><h5>Contact</h5></li>
                     <li class="collection-item"><div><strong>Address</strong><span class="secondary-content navy-text"><u>${data.address}</u></span></div></li> 
-                    <li class="collection-item"><div><strong>Phone</strong><a href="tel:${data.phone}" class="secondary-content navy-text"><u>${data.phone}</u></a></div></li> 
+                    <li class="collection-item"><div><strong>Phone</strong><a href="tel:${phone}" class="secondary-content navy-text"><u>${phone}</u></a></div></li> 
                     <li class="collection-item"><div><strong>Email</strong><a href="mailto:${data.email}" class="secondary-content navy-text"><u>${data.email}</u></a></div></li> 
                     <li class="collection-item"><div><strong>Website</strong><a href="${data.website}" class="secondary-content navy-text" target="_blank"><u>${data.website}</u></a></div></li>
                     </ul>
             </div>
 
             <div class="col s12 m12">
-                <ul id="contact" class="collection with-header" style="border: 2px solid navy; border-radius: 8px">
+                <ul id="player" class="collection with-header" style="border: 2px solid navy; border-radius: 8px">
                     <li class="collection-header white-text text-center center" style="background-color: var(--primaryColor) !important; border-radius: 8px;"><h5>Player</h5></li>
 
                     `;
                     
             data.squad.forEach(function(player) {
-                if (player.role == 'PLAYER') {
+                if (player.role === 'PLAYER') {
                 var shirtNumber = (player.shirtNumber) ? (player.shirtNumber) : '';
                 html += `<li class="collection-item avatar">
                             <i class="material-icons circle secondary-color-text" style="background-color: var(--primaryColor)">people</i>
@@ -433,6 +445,16 @@ function viewHtmlDetailTeam(data) {
                         </li>`;
                 }
             });
+
+            data.squad.forEach(function(player) {
+              if (player.role === 'COACH') {
+              html += `<li class="collection-item avatar">
+                          <i class="material-icons circle navy-text" style="background-color: var(--secondaryColor)">people</i>
+                          <span class="title navy-text"><strong>${player.name}</strong></span>
+                          <p>${player.role}</p>
+                      </li>`;
+              }
+          });
 
                 `</ul>
             </div>
