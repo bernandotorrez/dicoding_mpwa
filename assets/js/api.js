@@ -239,7 +239,7 @@ async function getFavoritedTeam() {
 
 function viewHtmlFavoritedTeam(data) {
   var html = '<div class="container"><div class="row">';
-
+  
   if (data.length == 0) {
     document.querySelector('#body-content').innerHTML = "<h5 class='center-content center'>" + MSG_NO_FAVORITE + '</h5>';
   } else {
@@ -251,15 +251,16 @@ function viewHtmlFavoritedTeam(data) {
         favorited = 'navy-text';
       }
       var crestUrl = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
-
+      var id = window.btoa(team.id);
       html += `<div class="col s6 m4 l3">
                     <div class="card team hoverable">
                         <div class="card-image center waves-effect waves-block waves-light">
-                            <img onerror="imgError(this)" src="${crestUrl}">
-                            
+                            <a href="detail-team.html?id=${id}">
+                              <img onerror="imgError(this)" src="${crestUrl}">
+                            </a>
                         </div>
                         <div class="card-content">
-                            <a href="team.html?id=${team.id}" class="card-title truncate" title="${team.name}">${team.name}</a>
+                            <a href="detail-team.html?id=${id}" class="card-title truncate" title="${team.name}">${team.name}</a>
                             <a class="btn-floating halfway-fab waves-effect waves-light second_color" id="${team.id}" onclick="addFavoriteTeam(this)"><i class="material-icons ${favorited}">favorite</i></a>
                         </div>
                     </div>
@@ -406,6 +407,7 @@ function viewHtmlDetailTeam(data) {
   var html = '';
   var image = (data.crestUrl) ? forceHttps(data.crestUrl) : 'assets/images/default-team-badge.png';
   var phone = (data.phone) ? (data.phone) : '';
+  var email = (data.email) ? (data.email) : '';
   html += `
         <div class="nav-content container">
             <div class="row">
@@ -424,7 +426,7 @@ function viewHtmlDetailTeam(data) {
                     <li class="collection-header white-text text-center center" style="background-color: var(--primaryColor) !important; border-radius: 8px;"><h5>Contact</h5></li>
                     <li class="collection-item"><div><strong>Address</strong><span class="secondary-content navy-text"><u>${data.address}</u></span></div></li> 
                     <li class="collection-item"><div><strong>Phone</strong><a href="tel:${phone}" class="secondary-content navy-text"><u>${phone}</u></a></div></li> 
-                    <li class="collection-item"><div><strong>Email</strong><a href="mailto:${data.email}" class="secondary-content navy-text"><u>${data.email}</u></a></div></li> 
+                    <li class="collection-item"><div><strong>Email</strong><a href="mailto:${email}" class="secondary-content navy-text"><u>${email}</u></a></div></li> 
                     <li class="collection-item"><div><strong>Website</strong><a href="${data.website}" class="secondary-content navy-text" target="_blank"><u>${data.website}</u></a></div></li>
                     </ul>
             </div>
