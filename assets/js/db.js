@@ -1,12 +1,14 @@
-var dbPromise = idb.open('football', 1, (upgradeDb) => {
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+const dbPromise = idb.open('football', 1, (upgradeDb) => {
   if (!upgradeDb.objectStoreNames.contains('football')) {
-    var team = upgradeDb.createObjectStore('team', {
+    const team = upgradeDb.createObjectStore('team', {
       keyPath: 'id'
     });
     team.createIndex('date', 'date');
     team.createIndex('flag_favorite', 'flag_favorite');
 
-    var standing = upgradeDb.createObjectStore('standing', {
+    const standing = upgradeDb.createObjectStore('standing', {
       keyPath: 'id'
     });
   }
@@ -26,14 +28,14 @@ const dbTeam = {
       .getAll();
   },
   insert: async (data) => {
-    var tx = (await dbPromise).transaction('team', 'readwrite');
+    const tx = (await dbPromise).transaction('team', 'readwrite');
     tx.objectStore('team').add(data);
 
     return tx.complete;
   },
 
   update: async (data) => {
-    var tx = (await dbPromise).transaction('team', 'readwrite');
+    const tx = (await dbPromise).transaction('team', 'readwrite');
     tx.objectStore('team').put(data);
 
     return tx.complete;
@@ -67,14 +69,14 @@ const dbStanding = {
       .getAll();
   },
   insert: async (data) => {
-    var tx = (await dbPromise).transaction('standing', 'readwrite');
+    const tx = (await dbPromise).transaction('standing', 'readwrite');
     tx.objectStore('standing').add(data);
 
     return tx.complete;
   },
 
   update: async (data) => {
-    var tx = (await dbPromise).transaction('standing', 'readwrite');
+    const tx = (await dbPromise).transaction('standing', 'readwrite');
     tx.objectStore('standing').put(data);
 
     return tx.complete;
@@ -101,7 +103,7 @@ function addFavoriteTeam(e) {
 
   dbTeam.get(parseInt(id)).then(function(team) {
     if (team) {
-      if (team.flag_favorite == 0) {
+      if (team.flag_favorite === 0) {
         dbTeam.update({
           id: team.id,
           name: team.name,
@@ -131,6 +133,8 @@ function addFavoriteTeam(e) {
           html: `${team.name} Deleted from Favorite`,
           classes: 'red'
         });
+
+        getFavoritedTeam();
       }
     } else {
       M.toast({

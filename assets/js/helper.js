@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 function hideLoading() {
   var loading = document.querySelector('.loading-content');
   loading.classList.add('hide');
@@ -13,6 +14,6 @@ function imgError($this) {
 
 function changeClassIcon(e) {
   let { innerText } = e;
-  if (innerText == 'favorite') { innerText = 'favorite_border' } else { innerText = 'favorite' };
+  if (innerText === 'favorite') { innerText = 'favorite_border' } else { innerText = 'favorite' };
   e.innerText = innerText;
 }

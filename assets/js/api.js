@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable indent */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-trailing-spaces */
@@ -18,8 +19,6 @@ const monthNames = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-const MSG_NOT_FOUND = 'Page not Found';
-const MSG_FORBIDDEN = 'Page cant be Accessed';
 const MSG_ERROR = 'Ooops, Something went wrong';
 const MSG_NO_FAVORITE = 'Favorite teams is Empty';
 
@@ -28,7 +27,7 @@ const fetchApi = (url) => {
 };
 
 function status(response) {
-  var bodyContent = document.querySelector('#body-content > .container');
+  const bodyContent = document.querySelector('#body-content > .container');
   if (response.status !== 200) {
     console.log('Error : ' + response.status);
     bodyContent.innerHTML = "<h5 class='center-content center'>" + MSG_ERROR + '</h5>';
@@ -43,7 +42,7 @@ function json(response) {
 }
 
 function error() {
-  document.querySelector('#body-content').innerHTML = "<h5 class='center-content center'>" + MSG_ERROR + '</h5>';
+  document.querySelector('#body-content').innerHTML = `<h5 class='center-content center'>${MSG_ERROR}</h5>`;
   hideLoading();
 }
 
@@ -71,11 +70,11 @@ function getCompetitionStandings() {
 function viewHtmlStandings(data) {
   const { standings } = data;
   standings.forEach(function(standing) {
-    var html = '<div class="row">';
+    let html = '<div class="row">';
     standing.table.forEach(function(table) {
-      var crestUrl = (table.team.crestUrl) ? forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
+      const crestUrl = (table.team.crestUrl) ? forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
 
-      var team_name = table.team.name;
+      let team_name = table.team.name;
 
       if (team_name.length >= 20) {
         team_name = team_name.substring(0, 15) + '...';
@@ -109,14 +108,14 @@ function viewHtmlStandings(data) {
     });
     html += '</div>';
 
-    var content = document.querySelector('#' + standing.type.toLowerCase());
+    const content = document.querySelector('#' + standing.type.toLowerCase());
     content.innerHTML = html;
   });
 
   standings[0].table.forEach(function(table) {
     dbStanding.get(table.team.id).then(function(data) {
       if (!data) {
-        var crestUrl = (table.team.crestUrl) ? forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
+        const crestUrl = (table.team.crestUrl) ? forceHttps(table.team.crestUrl) : 'assets/images/default-team-badge.png';
         dbStanding.insert({
           id: table.team.id,
           name: table.team.name,
@@ -126,10 +125,10 @@ function viewHtmlStandings(data) {
     });
   });
 
-  var options = {
+  const options = {
     swipeable: true
   };
-  var tabs = document.getElementById('tabs-swipe-demo');
+  const tabs = document.getElementById('tabs-swipe-demo');
   M.Tabs.init(tabs, options);
 
   hideLoading();
@@ -140,6 +139,7 @@ async function getTeams() {
   const db = await getTeamFromDb();
 
   if (db.length > 0) {
+    console.log('ambil data dari db');
     viewHtmlTeamsDb(db);
   } else {
     fetchApi(urlApi)
@@ -151,9 +151,9 @@ async function getTeams() {
 }
 
 function viewHtmlTeamsApi(data) {
-  var html = '<div class="container"><div class="row">';
+  let html = '<div class="container"><div class="row">';
   data.teams.forEach(function(team) {
-    var crestUrl = (team.crestUrl) ? forceHttps(team.crestUrl) : 'assets/images/default-team-badge.png';
+    const crestUrl = (team.crestUrl) ? forceHttps(team.crestUrl) : 'assets/images/default-team-badge.png';
 
     html += `<div class="col s6 m4 l3">
                 <div class="card team hoverable">
@@ -198,7 +198,7 @@ function viewHtmlTeamsApi(data) {
 }
 
 function viewHtmlTeamsDb(data) {
-  var html = '<div class="container"><div class="row">';
+  let html = '<div class="container"><div class="row">';
 
   data.forEach(function(team) {
     let favorited = '';
@@ -207,7 +207,8 @@ function viewHtmlTeamsDb(data) {
     } else {
       favorited = 'navy-text';
     }
-    var crestUrl = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
+
+    const crestUrl = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
 
     html += `<div class="col s6 m4 l3">
                 <div class="card team hoverable">
@@ -238,20 +239,21 @@ async function getFavoritedTeam() {
 }
 
 function viewHtmlFavoritedTeam(data) {
-  var html = '<div class="container"><div class="row">';
+  let html = '<div class="container"><div class="row">';
   
-  if (data.length == 0) {
+  if (data.length === 0) {
     document.querySelector('#body-content').innerHTML = "<h5 class='center-content center'>" + MSG_NO_FAVORITE + '</h5>';
   } else {
     data.forEach(function(team) {
       let favorited = '';
-      if (team.flag_favorite == 0) {
+      if (team.flag_favorite === 0) {
         favorited = 'white-text';
       } else {
         favorited = 'navy-text';
       }
-      var crestUrl = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
-      var id = window.btoa(team.id);
+
+      const crestUrl = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
+      const id = window.btoa(team.id);
       html += `<div class="col s6 m4 l3">
                     <div class="card team hoverable">
                         <div class="card-image center waves-effect waves-block waves-light">
@@ -274,13 +276,13 @@ function viewHtmlFavoritedTeam(data) {
 }
 
 function getDetailMatch() {
-  var url = new URLSearchParams(window.location.search);
-  var id = window.atob(url.get('id'));
+  const url = new URLSearchParams(window.location.search);
+  const id = window.atob(url.get('id'));
   if (!id) {
     return error();
   }
 
-  var loading = document.querySelector('.loading-content');
+  const loading = document.querySelector('.loading-content');
   loading.classList.remove('hide');
 
   const urlApi = `${baseUrl}/teams/${id}/matches`;
@@ -303,15 +305,15 @@ function getDetailMatch() {
 }
 
 function viewHtmlDetailMatch(data) {
-  var url = new URLSearchParams(window.location.search);
-  var id = window.atob(url.get('id'));
+  const url = new URLSearchParams(window.location.search);
+  const id = window.atob(url.get('id'));
 
   data.matches.forEach(match => {
-    var scoreHome = (match.score.fullTime.homeTeam == null) ? '-' : match.score.fullTime.homeTeam;
-    var scoreAway = (match.score.fullTime.awayTeam == null) ? '-' : match.score.fullTime.awayTeam;
-    var date = new Date(match.utcDate);
+    const scoreHome = (match.score.fullTime.homeTeam == null) ? '-' : match.score.fullTime.homeTeam;
+    const scoreAway = (match.score.fullTime.awayTeam == null) ? '-' : match.score.fullTime.awayTeam;
+    const date = new Date(match.utcDate);
 
-    var html = `<div class="col s12 m12 l6 center">
+    const html = `<div class="col s12 m12 l6 center">
         <div class="card hoverable horizontal match">
         <div class="card-image left waves-effect waves-block waves-light">
             <img onerror="imgError(this)" class="badge" data-team="${match.homeTeam.id}" src="assets/images/default-team-badge.png">
@@ -331,8 +333,8 @@ function viewHtmlDetailMatch(data) {
         </div>
     </div></div>`;
 
-    if (parseInt(match.competition.id) == parseInt(competitionId)) {
-      var content = document.querySelector('#' + match.status.toLowerCase() + ' > .row');
+    if (parseInt(match.competition.id) === parseInt(competitionId)) {
+      const content = document.querySelector('#' + match.status.toLowerCase() + ' > .row');
 
       if (content) {
         content.innerHTML = (match.status.toLowerCase() === 'finished') ? html + content.innerHTML : content.innerHTML + html;
@@ -341,8 +343,8 @@ function viewHtmlDetailMatch(data) {
   });
 
   dbStanding.get(parseInt(id)).then((team) => {
-    var image = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
-    var content = document.querySelector('.team-detail');
+    const image = (team.image) ? forceHttps(team.image) : 'assets/images/default-team-badge.png';
+    const content = document.querySelector('.team-detail');
     content.innerHTML = `<div class="badge-team">
             <img onerror="imgError(this)" class="responsive-img" src="${image}">
           </div>
@@ -363,23 +365,24 @@ function viewHtmlDetailMatch(data) {
     }
   });
 
-  var options = {
+  const options = {
     swipeable: true
   };
-  var tabs = document.getElementById('tabs-swipe-demo');
+
+  const tabs = document.getElementById('tabs-swipe-demo');
   M.Tabs.init(tabs, options);
 
   hideLoading();
 }
 
 function getDetailTeam() {
-  var url = new URLSearchParams(window.location.search);
-  var id = window.atob(url.get('id'));
+  const url = new URLSearchParams(window.location.search);
+  const id = window.atob(url.get('id'));
   if (!id) {
     return error();
   }
 
-  var loading = document.querySelector('.loading-content');
+  const loading = document.querySelector('.loading-content');
 
   loading.classList.remove('hide');
 
@@ -404,10 +407,10 @@ function getDetailTeam() {
 
 function viewHtmlDetailTeam(data) {
   const content = document.querySelector('#body-content');
-  var html = '';
-  var image = (data.crestUrl) ? forceHttps(data.crestUrl) : 'assets/images/default-team-badge.png';
-  var phone = (data.phone) ? (data.phone) : '';
-  var email = (data.email) ? (data.email) : '';
+  let html = '';
+  const image = (data.crestUrl) ? forceHttps(data.crestUrl) : 'assets/images/default-team-badge.png';
+  const phone = (data.phone) ? (data.phone) : '';
+  const email = (data.email) ? (data.email) : '';
   html += `
         <div class="nav-content container">
             <div class="row">
@@ -439,7 +442,7 @@ function viewHtmlDetailTeam(data) {
                     
             data.squad.forEach(function(player) {
                 if (player.role === 'PLAYER') {
-                var shirtNumber = (player.shirtNumber) ? (player.shirtNumber) : '';
+                const shirtNumber = (player.shirtNumber) ? (player.shirtNumber) : '';
                 html += `<li class="collection-item avatar">
                             <i class="material-icons circle secondary-color-text" style="background-color: var(--primaryColor)">people</i>
                             <span class="title navy-text"><strong>${player.name} (${shirtNumber})</strong></span>
