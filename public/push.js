@@ -12,10 +12,10 @@ webPush.setVapidDetails(
 );
 
 var pushSubscription = {
-  endpoint: 'https://fcm.googleapis.com/fcm/send/fm5N_QndMeY:APA91bGrsQ3Xl-8zWg1I0XywCVNxpFeNI5JzvD8oUYbk_SjlT7mOz3IVkRlLzGkn5ob_dOr_uCdh0vma8-A4XvGtC1ALolPAEz8dfxM6KTiWjPEgTsSMec9p6EVwKrCJ5OSTziTHxttv',
+  endpoint: 'https://fcm.googleapis.com/fcm/send/e3m0LYfxzFs:APA91bGxL_-jZTEG43V9LIDobj2wRafvJWKNwajUxRkuSX0KDsZvZOBxZlbtyIS009aIO642tPmjwArR8PNgGNtZ7vZncPKqEOQQuE6Toccy5Luk125Qs6xdImK_bue6jZqLOoPOR5Y1',
   keys: {
-    p256dh: 'BBLCYZSGoqn4H9g7LnFuUHB7uaKAEe3fqt8m5aNn7/kfl/1HnMcmpa8hboXZKhL9cUrSeTlgszUvgk2+8TNTsjA',
-    auth: 'TPHQuxm9eA+ZmX25ppTRyA=='
+    p256dh: 'BDARi1nXs4erKdOoJPfmVEPtvyteVy21VYUR8Z7pU8Tpf49Rf0xrqW7F1UGiZGfQDHpiigkLVI93LISI+ArMOAI=',
+    auth: 'xPlOSFScDCTaraO6c1nrzA=='
   }
 };
 
